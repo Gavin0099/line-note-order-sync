@@ -1,0 +1,93 @@
+{
+  "source_command": "python -m governance_tools.f7_full_update --repo . --framework-root ai-governance-framework --fetch-remote origin --fetch-ref main --format json",
+  "ok": true,
+  "f7_final_status": "full_update_completed",
+  "repo_role": "submodule_consumer",
+  "stages": {
+    "framework_pointer": "already_current",
+    "repo_local_instruction": "verified",
+    "memory_writer_coverage": "verified",
+    "hook_validator_enforcement": "verified",
+    "existing_memory_normalization": "completed",
+    "gitignore_hygiene": "verified",
+    "protected_hash_sync": "verified",
+    "target_source": "fresh_remote_ls_remote",
+    "target_fresh_upstream_verified": true,
+    "target_claim_boundary": "fresh upstream target verified; already_current/updated claims are allowed",
+    "final_status": "full_update_completed",
+    "final_status_scope": "full_update_completion"
+  },
+  "tool_provenance": {
+    "executing_root": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync\\ai-governance-framework",
+    "executing_revision": "1f5b09e221096b3b4494d12e1db9e233e1c8de62",
+    "executing_worktree_dirty": false,
+    "sampled": "before_any_mutation",
+    "claim_boundary": "identifies the checkout that produced this report, sampled before any mutation; it is not compared against any required revision"
+  },
+  "lock_consistency": {
+    "value": "consistent",
+    "source": "governance_maturity_summary.lock_consistency",
+    "reasons": [
+      "lock_file_dirty=false",
+      "lock_adopted_commit=1f5b09e221096b3b4494d12e1db9e233e1c8de62",
+      "framework_head=1f5b09e221096b3b4494d12e1db9e233e1c8de62",
+      "no fetch was performed; this is a local lock-vs-checkout comparison"
+    ]
+  },
+  "user_facing_status": {
+    "value": "full_candidate",
+    "source": "governance_maturity_summary.derived",
+    "reasons": [
+      "Visible static governance surfaces are present.",
+      "This is still only a candidate; runtime enforcement and semantic correctness are not proven."
+    ]
+  },
+  "human_readable_adoption_summary": [
+    "[human_readable_adoption_summary]",
+    "用途：這段用人類可讀的方式說明 AI Governance 更新後，目前哪些功能已導入、哪些尚未導入或尚未驗證。",
+    "先看結論：",
+    "這份檢查做了什麼：檢查 framework、版本帳本、repo 規則、hooks、領域合約、自動檢查與記憶工作流的可見狀態。",
+    "現在能不能用：可使用目前可見的治理表面；但 runtime 強制與內容正確性仍未被證明。",
+    "還差什麼：這份靜態檢查沒有看到導入缺口；runtime 與實際強制效果仍未驗證。",
+    "整體導入狀態：full_candidate - 可見的靜態表面已齊備，但 runtime enforcement 仍未被證明.",
+    "需要查技術細項再往下看：",
+    "AI Governance 功能導入狀態：",
+    "| 功能 | 狀態 | 這個功能是做什麼 |",
+    "| --- | --- | --- |",
+    "| 版本帳實一致性（Lock vs checkout consistency） | 已可用 | 比對 governance/framework.lock.json 的 adopted_commit 與本地 framework checkout HEAD；不做 fetch，也不宣稱真實遠端最新版。 |",
+    "| 框架本體（Framework checkout） | 已可用 | 提供 AI Governance 工具與規則來源；目前偵測到的導入型態是 submodule_consumer。 |",
+    "| 版本新鮮度（Framework version freshness） | 已可用 | 檢查本地 framework 是否追上本地已知 tracking ref；真正遠端最新證據由 updater 另外回報。 |",
+    "| 本 repo 規則（Repo governance instructions） | 已可用 | 讓 agent 進入這個 repo 時知道本 repo 的風險、測試與操作規則。 |",
+    "| 靜態治理檔案（Static framework files） | 已可用 | 提供不跑 runtime 也能讀到的治理文件、規則與導入狀態。 |",
+    "| runtime 治理能力（Runtime-capable governance） | 未驗證 | 代表 repo 是否具備可執行的 runtime governance；只有明確回報已可用時才算導入。 |",
+    "| 本機 commit/push 檢查（Git hooks） | 已可用 | 在本機 commit 或 push 前提示/檢查治理狀態；這不等於所有機器都已強制執行。 |",
+    "| 領域合約（Domain contract） | 已可用 | 用 contract.yaml 宣告這個 repo 自己的治理需求與驗證入口。 |",
+    "| 自動驗證層（Validator surface） | 已可用 | 列出 repo 專屬 validator，讓更新後能知道是否接上自動檢查。 |",
+    "| 記憶工作流（Memory workflow） | 未驗證 | 顯示 memory 寫入/檢查流程是否有被觀測；不代表記憶內容已完整同步。 |",
+    "技術細項：",
+    "- AI Governance framework checkout: present - 偵測到的導入型態是 submodule_consumer",
+    "- Framework version freshness: current_vs_local_tracking - 比較本地 framework 與本地已知 tracking ref；這不是遠端最新 head 的證明",
+    "- Repo governance instructions: 已可用 - AGENTS.md 包含 agent 應遵守的 repo 專屬治理規則",
+    "- Static framework files: yes - 檢查可見 framework 檔案是否足以提供靜態治理指引",
+    "- Runtime-capable governance: not_checked - 這份 summary 不證明 runtime execution 已可用",
+    "- Git hook framework root: inside_repo - 顯示本機 pre-commit/pre-push hooks 指向哪裡；hook 是本機狀態，不代表所有環境都強制執行",
+    "- Domain contract: 已可用 - contract.yaml 宣告 repo 專屬治理合約",
+    "- Validator surface: 已可用 - validator 是 contract 宣告的 repo 專屬自動檢查",
+    "- Memory workflow surface: not_checked - 這份 summary 不推論 memory 是否完整同步",
+    "尚未導入或尚未被證明：這份 report-only summary 沒有偵測到缺口。",
+    "白話結論：",
+    "- AI Governance 在可見的靜態表面上看起來已齊備，但 runtime enforcement 仍未被證明。",
+    "不能從這份 summary 宣稱：",
+    "- domain correctness",
+    "- framework pin matches the true remote head",
+    "- full governance adoption",
+    "- hook or CI enforcement",
+    "- memory consolidation completeness",
+    "- release readiness",
+    "- runtime self-contained governance",
+    "- runtime smoke passed"
+  ],
+  "errors": [],
+  "warnings": [],
+  "claim_boundary": "Specific F-7 verification and static adoption snapshot only; not native host lifecycle, product correctness, merge enforcement or release proof."
+}

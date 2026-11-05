@@ -17,14 +17,19 @@ Python 3.12+ 與 Git 為前置需求；Windows 的 Git hooks 需要 Git for Wind
 
 ```powershell
 git submodule update --init --recursive
-$env:PYTHONPATH = (Resolve-Path ai-governance-framework).Path
-$env:PYTHONUTF8 = '1'
-python -m governance_tools.hook_installer --repo . --framework-root ai-governance-framework
+Push-Location ai-governance-framework
+try {
+    python -X utf8 -m governance_tools.hook_installer --repo .. --framework-root .
+} finally {
+    Pop-Location
+}
 python scripts/check_governance.py
 ```
 
 Git 不會把 `.git/hooks/` 跟著 clone。每個 clone 都要執行 installer；
 CI 在一次性 runner 上做同樣安裝與檢查，不假設開發者機器已有 hooks。
+此安裝方式不在目前 PowerShell 留下 `PYTHONPATH`，避免 Windows 路徑被 Git Bash
+當成不同分隔規則的搜尋路徑串接。檢查腳本只替自己的子程序設定 module 搜尋路徑。
 
 ## 驗證與證據
 
@@ -42,9 +47,8 @@ CI 上傳的紀錄可由 PR 的 Governance checks 查閱。
 在完成導入的乾淨 checkout，先 dry-run，再依輸出的 blocker 決定是否 apply：
 
 ```powershell
-$env:PYTHONPATH = (Resolve-Path ai-governance-framework).Path
-python -m governance_tools.f7_full_update --repo . --framework-root ai-governance-framework --fetch-remote origin --fetch-ref main --format human
-python -m governance_tools.f7_full_update --repo . --framework-root ai-governance-framework --fetch-remote origin --fetch-ref main --apply --format human
+python -X utf8 ai-governance-framework/governance_tools/f7_full_update.py --repo . --framework-root ai-governance-framework --fetch-remote origin --fetch-ref main --format human
+python -X utf8 ai-governance-framework/governance_tools/f7_full_update.py --repo . --framework-root ai-governance-framework --fetch-remote origin --fetch-ref main --apply --format human
 ```
 
 不以直接修改 gitlink 或 lock 代替 F-7。Apply 後若有待提交變更，保留輸出的 partial 狀態，
@@ -63,8 +67,26 @@ Implementation 與其 memory companion 分開提交、維持同一 PR。
 沒有可用的原生接線時，可在真正 session end 用既有工具顯示手動操作：
 
 ```powershell
-python -m governance_tools.manage_agent_closeout --project-root . print-manual --agent codex
+Push-Location ai-governance-framework
+try {
+    python -m governance_tools.manage_agent_closeout --project-root .. print-manual --agent codex
+} finally {
+    Pop-Location
+}
 ```
+
+## 本機結果與仍待驗證的部分
+
+- `python scripts/check_governance.py` 的八項檢查通過，Codex adapter 的三個事件分別執行。
+- 在 framework 工作目錄執行四個相關測試檔，89 passed；首次在 consumer 目錄執行時有
+  三個案例因相對 fixture 路徑不存在失敗，改用正確 cwd 後重跑，沒有修改上游測試。
+- F-7 已執行 apply；初始 lock 記錄實際 pin，後續 apply receipt 確認 lock 與 checkout 一致，
+  乾淨索引的 dry-run 回報 `full_update_completed`。這是該次更新檢查的狀態，不是完整治理保證。
+- `external_repo_smoke` 的 session_start、pre_task 通過，並留有三項 assumption 的 report-only
+  advisory；它沒有本 repo 的 post-task fixture，所以 `post_task_ok` 保留 null。
+  post_task 由另一條 Codex adapter fixture smoke 驗證，不改寫外部 smoke receipt。
+- 真實 pre-commit 已觸發；pre-push 與遠端 CI 在交付時另行驗證，狀態看 PR 與交付報告。
+- 原生 host lifecycle、merge protection、LINE 操作與訂單功能保持未驗證。
 
 ## 驗收界線
 

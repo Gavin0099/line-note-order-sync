@@ -7,10 +7,10 @@
   "framework_root": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync\\ai-governance-framework",
   "framework_before": "1f5b09e221096b3b4494d12e1db9e233e1c8de62",
   "framework_after": "1f5b09e221096b3b4494d12e1db9e233e1c8de62",
-  "lock_adopted_commit": null,
-  "lock_matches_checkout": false,
+  "lock_adopted_commit": "1f5b09e221096b3b4494d12e1db9e233e1c8de62",
+  "lock_matches_checkout": true,
   "update_status": "already_current",
-  "generated_at_utc": "2026-11-05T10:13:50Z",
+  "generated_at_utc": "2026-11-05T10:19:04Z",
   "claim_boundary": [
     "receipt is review evidence, not proof",
     "no fetch truth is implied unless explicitly recorded",
