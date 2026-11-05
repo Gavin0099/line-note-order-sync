@@ -7,7 +7,7 @@
 ## Current Phase
 
 - [x] Phase G0 : PR #1、#2 已依序修正、審查與合併；PR #2 final-head 兩平台 CI 通過。
-- [>] Phase M0 : S00 資料契約、合成案例與開發骨架；另開 PR review。
+- [>] Phase M0 : S00 實作與驗證完成，PR #3 待 owner review／接受；未進入 S01。
 - [ ] Phase M1 : S01 Windows UIA 單篇擷取驗證。
 - [ ] Phase M2 : S02–S05 手動匯入 MVP。
 - [ ] Phase M3 : S06 Windows 試用與交付。
@@ -21,10 +21,11 @@
 - [x] PR #1 審查修正：暱稱彙總、S08 完整性／多篇／結團、人工宣告標記與效益量測。
 - [x] PR #2 獨立 final-head 審查及 Windows／Linux CI；main 合併結果與已審 tree 一致。
 - [x] S00 PRD／資料契約、商品設定、合成正反案例、擷取模板與可安裝 CLI 骨架。
-- [ ] S00 以本機／CI 驗證並交付獨立 PR；保留真實 TXT／實機能力未確認。
+- [x] S00 本機驗證與初始實作 head 的六項 CI 通過，已建立 PR #3；真實 TXT／實機仍未確認。
 
 本次 DONE 條件：兩個 PR 合併，完成 S00 的契約、驗收案例與可安裝骨架並另開 PR 交付。
 S00 沒有訂單 parser、SQLite schema 或擷取；不把 CLI smoke 當作後續 slice 的驗收。
+PR #3 保持 OPEN 供 owner review；canonical companion 推送後的最新 CI 由交付報告與 PR checks 查核。
 
 ## Backlog
 

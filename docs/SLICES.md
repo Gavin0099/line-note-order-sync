@@ -1,6 +1,6 @@
 # SLICE 工作清單
 
-日期：2026-11-05。S00 已建立契約與骨架、進行交付驗證；S01–S09 仍為 `PLANNED`。
+日期：2026-11-05。S00 已完成契約、骨架與驗證，PR #3 待 review；S01–S09 仍為 `PLANNED`。
 當前 phase 由 root PLAN 記錄，下方保留各片驗收與執行紀錄。
 每片應交付一個可展示的結果、對應測試與簡短執行紀錄；不以程式檔案存在作為完成。
 工時為初估工程日，等待來源與人工核對另計。
@@ -48,16 +48,20 @@ P2 的網站後台、付款與物流不在本輪切片。
 
 **執行紀錄（2026-11-05）**
 
-- 狀態：`IN_PROGRESS`（契約／骨架已實作，本機驗證完成；獨立 review 與遠端 CI 待 PR 確認）。
+- 狀態：`DONE`（契約／骨架與驗證完成；PR #3 待 owner review，尚未合併）。
 - 交付：PRD、DATA_CONTRACT、CAPTURE_FEASIBILITY 模板、商品 YAML、四份合成 JSON、
   pyproject、CLI 套件入口與模組邊界、Product scaffold CI。
 - Windows Python 3.13.5 乾淨 venv：`pip install -e '.[dev]'` 成功；`python -m pytest -q` 為 4 passed；
   console help／module version 可用，無效 import 命令 exit 2、沒有產生資料檔。
+- `pip wheel --no-deps --wheel-dir dist .` 成功；第二個乾淨 venv 只安裝 wheel、沒有第三方 runtime 相依，help／version 可用。
 - 靜態案例核對：26 筆 parser 人工答案、19 個 workflow 情境及 50 個無 ID occurrence；
   JSON 可讀，但 parser／reconciliation 尚未執行這些案例。
 - `git check-ignore --no-index` 確認 DB／WAL／SHM、輸入、截圖、dump、exports、venv／dist 被忽略；
   合成 fixture 未被忽略。`git diff --check` 通過。
-- Python 3.12 與兩平台結果由本 slice 的實際 CI 查核，不能以本機 3.13 代替。
+- 實作 head `00821fd` 的 Windows／Linux × Python 3.12／3.13 四項 Product scaffold CI 全通過：
+  [run 42015069633](https://github.com/Gavin0099/line-note-order-sync/actions/runs/42015069633)；
+  兩項 Governance CI 亦通過：[run 42015069554](https://github.com/Gavin0099/line-note-order-sync/actions/runs/42015069554)。
+  此為該實作版本結果；後續 companion 的最新檢查以 PR #3 checks 與交付報告為準。
 - 尚缺真實 TXT、LINE／UIA／完整性實測與營運效益；下一片為限時 S01，未授權執行。
 
 ## S01：單篇記事本的唯讀擷取實驗
