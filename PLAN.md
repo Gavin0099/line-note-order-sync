@@ -6,7 +6,7 @@
 
 ## Current Phase
 
-- [>] Phase G0 : 導入 AI Governance；尚未開始產品功能 S00–S09。
+- [>] Phase G0 : repo 層級治理導入與本機驗證完成，交付 owner review；產品 S00–S09 尚未開始。
 - [ ] Phase M0 : S00 資料契約與開發骨架。
 - [ ] Phase M1 : S01 Windows UIA 單篇擷取驗證。
 - [ ] Phase M2 : S02–S05 手動匯入 MVP。
@@ -20,9 +20,10 @@
 
 - [x] 評估 repo 與上游導入文件，確認採 submodule consumer 路徑。
 - [x] Owner 選定 domain 為 LINE 記事本團購訂單整理，risk 為 medium。
-- [ ] 建立 repo 專屬契約、AGENTS、記憶骨架與 framework lock。
-- [ ] 安裝並驗證 Git hooks、agent instruction surfaces 與 runtime smoke。
-- [ ] 驗證漂移、readiness、memory workflow 與 CI，交付獨立治理 PR。
+- [x] 建立 repo 專屬契約、AGENTS、記憶骨架與 framework lock。
+- [x] 安裝 Git hooks、agent instruction surfaces，驗證 hook 安裝與三個 runtime fixture 事件。
+- [x] 漂移、readiness 與 memory guard 本機通過；四個相關 framework 測試檔共 89 passed。
+- [x] 建立 Windows／Linux CI；實際遠端結果由 PR checks 與交付報告確認，不在本檔預填。
 
 本次 DONE：導入適用的 framework surfaces，完成本機直接相關驗證與實際 commit/push hook
 試驗，將結果及未驗證能力交付 review。保留原規劃 PR #1；不合併 PR。
