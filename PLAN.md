@@ -6,8 +6,8 @@
 
 ## Current Phase
 
-- [>] Phase G0 : repo 層級治理導入與驗證完成；依 owner 授權修正、審查並條件式合併 PR #1、#2。
-- [ ] Phase M0 : S00 資料契約與開發骨架。
+- [x] Phase G0 : PR #1、#2 已依序修正、審查與合併；PR #2 final-head 兩平台 CI 通過。
+- [>] Phase M0 : S00 資料契約、合成案例與開發骨架；另開 PR review。
 - [ ] Phase M1 : S01 Windows UIA 單篇擷取驗證。
 - [ ] Phase M2 : S02–S05 手動匯入 MVP。
 - [ ] Phase M3 : S06 Windows 試用與交付。
@@ -18,20 +18,17 @@
 
 ## Active Sprint
 
-- [x] 評估 repo 與上游導入文件，確認採 submodule consumer 路徑。
-- [x] Owner 選定 domain 為 LINE 記事本團購訂單整理，risk 為 medium。
-- [x] 建立 repo 專屬契約、AGENTS、記憶骨架與 framework lock。
-- [x] 安裝 Git hooks、agent instruction surfaces，驗證 hook 安裝與三個 runtime fixture 事件。
-- [x] 漂移、readiness 與 memory guard 本機通過；四個相關 framework 測試檔共 89 passed。
-- [x] 建立 Windows／Linux CI；實際遠端結果由 PR checks 與交付報告確認，不在本檔預填。
+- [x] PR #1 審查修正：暱稱彙總、S08 完整性／多篇／結團、人工宣告標記與效益量測。
+- [x] PR #2 獨立 final-head 審查及 Windows／Linux CI；main 合併結果與已審 tree 一致。
+- [x] S00 PRD／資料契約、商品設定、合成正反案例、擷取模板與可安裝 CLI 骨架。
+- [ ] S00 以本機／CI 驗證並交付獨立 PR；保留真實 TXT／實機能力未確認。
 
-本次 DONE：導入適用的 framework surfaces，完成本機直接相關驗證與實際 commit/push hook
-試驗，將結果及未驗證能力交付 review。依 2026-11-05 owner 新授權，先處理 PR #1，
-再審查／條件式合併 PR #2；兩者完成後開始 S00。
+本次 DONE 條件：兩個 PR 合併，完成 S00 的契約、驗收案例與可安裝骨架並另開 PR 交付。
+S00 沒有訂單 parser、SQLite schema 或擷取；不把 CLI smoke 當作後續 slice 的驗收。
 
 ## Backlog
 
-- P0: 依序執行 S00、限時 S01，再完成 S02–S06；目前均尚未實作。
+- P0: S00 交付後進入限時 S01，再完成 S02–S06；後者尚未實作。
 - P1: S07 改單／取消、S08 定期擷取、S09 Google Sheets，依能力條件另行驗收。
 - P2: Web 後台、付款與物流暫緩。
 
@@ -43,10 +40,12 @@
 - 2026-11-05：Owner 選定中風險，理由為處理買家資料與叫貨數量，需完整性檢查與人工核對。
 - 2026-11-05：Owner 接受 MVP 同社群暱稱彙總及同名／改名風險，保留 occurrence 與人工修正。
 - 2026-11-05：Owner 授權依序處理兩個 PR、條件式合併，再開始 S00；暫停新增治理範圍。
+- 2026-11-05：PR #1 merge=0a36de7；PR #2 merge=cb04aaf，已審 head=93c5ce3，CI run=42013777278 成功。
+- 2026-11-05：S01 首個候選為 line_openchat_note，實際來源由本人於實測時確認；TXT 樣本尚缺。
 
 ## Known Risks
 
-- 尚無應用程式、訂單 parser、SQLite schema 或產品測試；治理驗證不代表產品驗證。
+- 僅有 S00 CLI 骨架與其 smoke 測試；尚無訂單 parser、SQLite schema 或訂單行為測試。
 - Windows LINE 的 UIA 擷取、穩定留言 ID 與每批完整性均為 NOT_EVALUATED。
 - repo 為公開；實際留言、買家資料、登入資訊與本機傾印不得提交。
 - 缺少來源身分時不得推定改單或取消；部分／未知快照不得成為正式叫貨報表依據。
@@ -55,6 +54,6 @@
 
 ## Anti-Goals
 
-- PR #1、#2 合併前不開始 S00；之後僅實作 S00，不操作 LINE、不匯入真實買家資料。
+- 本次僅實作 S00，不操作 LINE、不匯入真實買家資料，不開始 S01–S09。
 - 不修改 framework submodule 內容，不調降驗證、證據或 fail-closed 標準。
 - 不變更 repo 可見性或 branch protection，不發布軟體版本或部署；S00 另開 PR 交付。

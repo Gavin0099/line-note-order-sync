@@ -1,6 +1,7 @@
 # SLICE 工作清單
 
-日期：2026-11-05。所有 slice 均為 `PLANNED`，本次僅建立規劃文件。
+日期：2026-11-05。S00 已建立契約與骨架、進行交付驗證；S01–S09 仍為 `PLANNED`。
+當前 phase 由 root PLAN 記錄，下方保留各片驗收與執行紀錄。
 每片應交付一個可展示的結果、對應測試與簡短執行紀錄；不以程式檔案存在作為完成。
 工時為初估工程日，等待來源與人工核對另計。
 
@@ -44,6 +45,20 @@ P2 的網站後台、付款與物流不在本輪切片。
 **停止條件**：把暱稱彙總宣稱為穩定真實身分，或重匯與改單語意矛盾時，先修正契約。
 依 owner 決定接受同社群暱稱分組，保留原始 occurrence 與人工修正，不要求每則無 ID 留言人工映射。
 缺少真實 TXT 樣本時可先完成結構化 JSON 契約，不宣稱原生複製格式已支援。
+
+**執行紀錄（2026-11-05）**
+
+- 狀態：`IN_PROGRESS`（契約／骨架已實作，本機驗證完成；獨立 review 與遠端 CI 待 PR 確認）。
+- 交付：PRD、DATA_CONTRACT、CAPTURE_FEASIBILITY 模板、商品 YAML、四份合成 JSON、
+  pyproject、CLI 套件入口與模組邊界、Product scaffold CI。
+- Windows Python 3.13.5 乾淨 venv：`pip install -e '.[dev]'` 成功；`python -m pytest -q` 為 4 passed；
+  console help／module version 可用，無效 import 命令 exit 2、沒有產生資料檔。
+- 靜態案例核對：26 筆 parser 人工答案、19 個 workflow 情境及 50 個無 ID occurrence；
+  JSON 可讀，但 parser／reconciliation 尚未執行這些案例。
+- `git check-ignore --no-index` 確認 DB／WAL／SHM、輸入、截圖、dump、exports、venv／dist 被忽略；
+  合成 fixture 未被忽略。`git diff --check` 通過。
+- Python 3.12 與兩平台結果由本 slice 的實際 CI 查核，不能以本機 3.13 代替。
+- 尚缺真實 TXT、LINE／UIA／完整性實測與營運效益；下一片為限時 S01，未授權執行。
 
 ## S01：單篇記事本的唯讀擷取實驗
 
