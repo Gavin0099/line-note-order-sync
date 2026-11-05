@@ -79,6 +79,8 @@ def report_html(payload: dict, manifest: dict) -> str:
 同社群暱稱彙總接受同名／改名風險；所有原始 occurrence 均保留。</p>
 <p>社群：{e(source['scope_key'])} ／ 記事本：{e(source['note_key'])}<br>
 來源時間（Asia/Taipei）：{e(source_time)} ／ 接受版本：{e(payload.get('acceptance_id', '未接受'))}</p>
+<p>版本接受人：{e(payload.get('accepted_by', '未接受'))} ／ 目前選用人：{e(payload.get('selection', {}).get('operator', '未選定'))}<br>
+選用時間：{e(payload.get('selection', {}).get('selected_at', '未選定'))}</p>
 <div class="cards">{cards or '<div class="card">目前無有效訂單</div>'}
 <div class="card">待核對<span class="number">{len(payload['blocking'])}</span>則</div></div>
 <p><a href="{e(manifest['files']['details'])}">留言明細 CSV</a> · <a href="{e(manifest['files']['buyers'])}">買家彙總 CSV</a> · <a href="{e(manifest['files']['totals'])}">商品統計 CSV</a> · <a href="manifest.json">來源 manifest</a></p>
@@ -95,7 +97,7 @@ def report_html(payload: dict, manifest: dict) -> str:
 
 
 def export_report(payload: dict, root: str | Path, *, draft: bool = False) -> Path:
-    if not draft and (not payload.get("acceptance_id") or payload["blocking"] or payload["completeness"]["status"] != "DECLARED_COMPLETE"):
+    if not draft and (not payload.get("acceptance_id") or not payload.get("selection") or payload["blocking"] or payload["completeness"]["status"] != "DECLARED_COMPLETE"):
         raise ContractError("正式匯出需固定的已接受、無阻擋且人工宣告完整版本")
     root = Path(root).resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -103,7 +105,8 @@ def export_report(payload: dict, root: str | Path, *, draft: bool = False) -> Pa
     # Safe filename uses database integers plus a compact source timestamp.
     stamp = datetime.fromisoformat(payload["captured_at"]).astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     identifier = payload["id"] if draft else payload["acceptance_id"]
-    destination = root / f"note-{int(payload['note_id'])}_{stamp}_{mode}_{int(identifier)}"
+    suffix = str(int(identifier)) if draft else f"accept-{int(identifier)}_selection-{int(payload['selection']['id'])}"
+    destination = root / f"note-{int(payload['note_id'])}_{stamp}_{mode}_{suffix}"
     if destination.exists():
         raise ContractError("報表目錄已存在；請指定另一個輸出根目錄，原報表不覆寫")
     manifest = {"mode": mode, "generated_at": now(), "source": payload["source"],
@@ -112,6 +115,7 @@ def export_report(payload: dict, root: str | Path, *, draft: bool = False) -> Pa
                 "run_id": payload["id"], "revision": payload["revision"], "parser_version": payload["parser_version"],
                 "input_sha256": payload["raw_sha256"], "config_sha256": payload["config_sha256"],
                 "accepted_by": payload.get("accepted_by"), "accepted_at": payload.get("accepted_at"),
+                "selection": payload.get("selection"), "storage_schema_version": payload["storage_schema_version"],
                 "blocking_positions": payload["blocking"], "totals": totals(payload),
                 "identity_mode": "community_nickname_grouping_not_stable_identity",
                 "files": {key: f"{mode}_{stamp}_{key}.csv" for key in ("details", "buyers", "totals", "review")}}

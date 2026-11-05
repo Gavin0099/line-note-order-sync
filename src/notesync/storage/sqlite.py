@@ -1,4 +1,4 @@
-"""SQLite v1 repository; raw inputs, decisions and accepted payloads persist."""
+"""SQLite v2 repository; raw inputs, decisions and selections persist."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import sqlite3
 
 from notesync.domain.models import ContractError
 
+SCHEMA_VERSION = 2
 SCHEMA = """
 BEGIN;
 CREATE TABLE notes(id INTEGER PRIMARY KEY, kind TEXT NOT NULL, scope_key TEXT NOT NULL,
@@ -32,11 +33,14 @@ CREATE TABLE buyer_groups(id INTEGER PRIMARY KEY, kind TEXT NOT NULL, scope_key 
 CREATE TABLE acceptances(id INTEGER PRIMARY KEY, note_id INTEGER NOT NULL REFERENCES notes(id),
  run_id INTEGER NOT NULL REFERENCES runs(id), revision INTEGER NOT NULL,
  payload TEXT NOT NULL, operator TEXT NOT NULL, accepted_at TEXT NOT NULL, UNIQUE(run_id,revision));
+CREATE TABLE selections(id INTEGER PRIMARY KEY, note_id INTEGER NOT NULL REFERENCES notes(id),
+ acceptance_id INTEGER NOT NULL REFERENCES acceptances(id),
+ previous_acceptance_id INTEGER REFERENCES acceptances(id), operator TEXT NOT NULL, selected_at TEXT NOT NULL);
 CREATE TABLE current_acceptances(note_id INTEGER PRIMARY KEY REFERENCES notes(id),
- acceptance_id INTEGER NOT NULL REFERENCES acceptances(id));
+ acceptance_id INTEGER NOT NULL REFERENCES acceptances(id), selection_id INTEGER NOT NULL REFERENCES selections(id));
 CREATE TABLE rejected_inputs(id INTEGER PRIMARY KEY, raw_sha256 TEXT NOT NULL, raw BLOB NOT NULL,
  reason TEXT NOT NULL, operator TEXT NOT NULL, created_at TEXT NOT NULL);
-PRAGMA user_version=1;
+PRAGMA user_version=2;
 COMMIT;
 """
 
@@ -59,13 +63,13 @@ class Store:
                 if tables:
                     raise ContractError("不修改未識別的既有資料庫；請選空白 POC DB")
                 self.conn.executescript(SCHEMA)
-            elif version != 1:
-                raise ContractError("資料庫 schema 版本不支援；不自動遷移")
+            elif version != SCHEMA_VERSION:
+                raise ContractError("需使用 v2 POC DB；請保留舊檔並選用新的空白 DB，不自動遷移")
             required = {"notes", "batches", "configs", "runs", "results", "reviews", "buyer_groups",
-                        "acceptances", "current_acceptances", "rejected_inputs"}
+                        "acceptances", "selections", "current_acceptances", "rejected_inputs"}
             present = {r[0] for r in self.conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             if not required <= present:
-                raise ContractError("資料庫不是 notesync v1 schema")
+                raise ContractError("資料庫不是 notesync v2 schema")
         except BaseException:
             self.conn.close()
             raise

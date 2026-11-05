@@ -10,7 +10,7 @@ import json
 from notesync.adapters.manual_import import load_json, validate_snapshot
 from notesync.domain.models import ContractError, ProductConfig, nonempty
 from notesync.parser.order_parser import PARSER_VERSION, parse_order
-from notesync.storage.sqlite import Store
+from notesync.storage.sqlite import SCHEMA_VERSION, Store
 
 
 def encoded(value: object) -> str:
@@ -89,6 +89,7 @@ def inspect_run(store: Store, run_id: int) -> dict:
       FROM runs JOIN batches ON runs.batch_id=batches.id JOIN configs ON runs.config_id=configs.id WHERE runs.id=?""", (run_id,)))
     source = validate_snapshot(bytes(info.pop("raw")))
     info["source"] = source["source"]
+    info["storage_schema_version"] = SCHEMA_VERSION
     info["captured_at"] = source["captured_at"]
     info["completeness"] = source["completeness"]
     info["config_document"] = json.loads(info["config_document"])
@@ -152,16 +153,24 @@ def accept_snapshot(store: Store, run_id: int, *, operator: str) -> dict:
             run["accepted_at"] = now()
             acceptance_id = conn.execute("INSERT INTO acceptances(note_id,run_id,revision,payload,operator,accepted_at) VALUES(?,?,?,?,?,?)",
                                          (run["note_id"], run_id, run["revision"], encoded(run), operator, run["accepted_at"])).lastrowid
-        conn.execute("INSERT INTO current_acceptances(note_id,acceptance_id) VALUES(?,?) ON CONFLICT(note_id) DO UPDATE SET acceptance_id=excluded.acceptance_id",
-                     (run["note_id"], acceptance_id))
-    return {"note_id": run["note_id"], "run_id": run_id, "acceptance_id": acceptance_id}
+        current = conn.execute("SELECT acceptance_id,selection_id FROM current_acceptances WHERE note_id=?", (run["note_id"],)).fetchone()
+        if current is None or current["acceptance_id"] != acceptance_id:
+            selection_id = conn.execute("INSERT INTO selections(note_id,acceptance_id,previous_acceptance_id,operator,selected_at) VALUES(?,?,?,?,?)",
+                                        (run["note_id"], acceptance_id, current["acceptance_id"] if current else None, operator, now())).lastrowid
+            conn.execute("INSERT INTO current_acceptances(note_id,acceptance_id,selection_id) VALUES(?,?,?) ON CONFLICT(note_id) DO UPDATE SET acceptance_id=excluded.acceptance_id,selection_id=excluded.selection_id",
+                         (run["note_id"], acceptance_id, selection_id))
+        else:
+            selection_id = current["selection_id"]
+    return {"note_id": run["note_id"], "run_id": run_id, "acceptance_id": acceptance_id, "selection_id": selection_id}
 
 
 def accepted_payload(store: Store, note_id: int) -> dict:
-    row = _row(store.conn, """SELECT a.id,a.payload FROM current_acceptances c
-      JOIN acceptances a ON a.id=c.acceptance_id WHERE c.note_id=?""", (note_id,))
+    row = _row(store.conn, """SELECT a.id,a.payload,s.id AS selection_id,s.operator AS selected_by,s.selected_at,s.previous_acceptance_id
+      FROM current_acceptances c JOIN acceptances a ON a.id=c.acceptance_id JOIN selections s ON s.id=c.selection_id WHERE c.note_id=?""", (note_id,))
     payload = json.loads(row["payload"])
     payload["acceptance_id"] = row["id"]
+    payload["selection"] = {"id": row["selection_id"], "operator": row["selected_by"], "selected_at": row["selected_at"],
+                            "previous_acceptance_id": row["previous_acceptance_id"]}
     return payload
 
 

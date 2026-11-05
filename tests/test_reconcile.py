@@ -30,6 +30,7 @@ def test_restart_repeat_import_and_accept_preserve_one_version(tmp_path, snapsho
         payload = accepted_payload(store, first["note_id"])
         assert totals(payload) == {"A": 3, "B": 2}
         assert store.conn.execute("SELECT COUNT(*) FROM acceptances").fetchone()[0] == 1
+        assert store.conn.execute("SELECT COUNT(*) FROM selections").fetchone()[0] == 1
         assert store.conn.execute("SELECT raw FROM batches").fetchone()[0] == raw
         assert payload["raw_sha256"] == hashlib.sha256(raw).hexdigest()
         assert payload["comments"][1]["text"] == "Ａ＋２"
@@ -235,3 +236,49 @@ def test_note_and_source_kind_isolation_and_mismatched_config_rejection(tmp_path
         third = importing(store, snapshot, config_doc)
         assert third["note_id"] not in (first["note_id"], second["note_id"])
         assert store.conn.execute("PRAGMA foreign_key_check").fetchall() == []
+
+
+def test_historical_reselection_preserves_each_operator_without_duplicating_versions(tmp_path, snapshot, config_doc):
+    from notesync.exporters.csv_exporter import export_report
+    snapshot["comments"] = [{**snapshot["comments"][0], "text": "A+2"}]
+    with Store(tmp_path / "db", create=True) as store:
+        a = importing(store, snapshot, config_doc)
+        first = accept_snapshot(store, a["run_id"], operator="Alice")
+        original = accepted_payload(store, a["note_id"])
+        original_report = export_report(original, tmp_path / "reports")
+        snapshot["comments"][0]["text"] = "A+3"
+        b = importing(store, snapshot, config_doc)
+        second = accept_snapshot(store, b["run_id"], operator="Bob")
+        selected = accept_snapshot(store, a["run_id"], operator="Carol")
+        current = accepted_payload(store, a["note_id"])
+        assert selected["acceptance_id"] == first["acceptance_id"]
+        assert selected["selection_id"] != first["selection_id"]
+        assert current["accepted_by"] == "Alice"
+        assert current["accepted_at"] == original["accepted_at"]
+        assert current["selection"]["operator"] == "Carol"
+        assert current["selection"]["selected_at"]
+        assert totals(current) == {"A": 2}
+        assert store.conn.execute("SELECT COUNT(*) FROM acceptances").fetchone()[0] == 2
+        events = store.conn.execute("SELECT operator,previous_acceptance_id,acceptance_id FROM selections ORDER BY id").fetchall()
+        assert [tuple(r) for r in events] == [("Alice", None, first["acceptance_id"]),
+                                             ("Bob", first["acceptance_id"], second["acceptance_id"]),
+                                             ("Carol", second["acceptance_id"], first["acceptance_id"])]
+        again = accept_snapshot(store, a["run_id"], operator="Carol")
+        assert again == selected
+        assert store.conn.execute("SELECT COUNT(*) FROM selections").fetchone()[0] == 3
+        new_report = export_report(current, tmp_path / "reports")
+        assert new_report != original_report
+        manifest = json.loads((new_report / "manifest.json").read_text(encoding="utf-8"))
+        assert manifest["accepted_by"] == "Alice"
+        assert manifest["selection"]["operator"] == "Carol"
+        assert "Carol" in (new_report / "index.html").read_text(encoding="utf-8")
+
+
+def test_v1_poc_database_is_preserved_without_automatic_migration(tmp_path):
+    path = tmp_path / "v1.sqlite3"
+    with sqlite3.connect(path) as conn:
+        conn.execute("PRAGMA user_version=1")
+    original = path.read_bytes()
+    with pytest.raises(ContractError, match="v2"):
+        Store(path, create=True)
+    assert path.read_bytes() == original

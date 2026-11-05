@@ -279,9 +279,11 @@ CLI 具體命令名稱在 S00 定稿，這裡不提供尚不存在的執行指�
 ### 手動功能 POC（2026-11-05）
 
 - 狀態：本機功能驗證完成，另開相依 PR；PR review／遠端 CI 看實際交付結果。
-- 交付：JSON importer、嚴格 parser、SQLite v1、追加人工決定、固定接受快照、
+- 交付：JSON importer、嚴格 parser、SQLite v2、追加人工決定／選用事件、固定接受快照、
   原子 CSV／HTML 套件與六步驟合成 demo；不啟動 LINE 或處理真實買家。
-- 本機產品 `python -m pytest -q`：98 passed；26 個 S00 parser 人工答案現已執行。
+- 本機產品 `python -m pytest -q`：100 passed；26 個 S00 parser 人工答案現已執行。
+- 補上歷史版本回選的選用事件（Alice → Bob → Carol），接受版本不重建、操作者與時間完整保留；
+  v1 POC DB 明確拒絕自動遷移，保留原檔，使用新空白 v2 DB。
 - 真實暫存 DB 驗證重開、重匯、快照替換、舊檔晚匯入、scope／note 隔離、
   人工拆併、重解析不繼承修正、部分拒絕、import／accept rollback。
 - 匯出驗證中文 BOM、公式／HTML 防護、固定版本、拒絕覆寫及失敗不留半份套件；CLI 各命令可操作。
