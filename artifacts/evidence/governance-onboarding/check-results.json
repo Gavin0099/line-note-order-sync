@@ -1,0 +1,42 @@
+[
+  {
+    "check": "contract",
+    "module": "governance_tools.domain_contract_loader",
+    "exit_code": 0
+  },
+  {
+    "check": "drift",
+    "module": "governance_tools.governance_drift_checker",
+    "exit_code": 0
+  },
+  {
+    "check": "hooks",
+    "module": "governance_tools.hook_install_validator",
+    "exit_code": 0
+  },
+  {
+    "check": "readiness",
+    "module": "governance_tools.external_repo_readiness",
+    "exit_code": 0
+  },
+  {
+    "check": "memory",
+    "module": "governance_tools.memory_workflow",
+    "exit_code": 0
+  },
+  {
+    "check": "codex-session_start",
+    "module": "runtime_hooks.smoke_test",
+    "exit_code": 0
+  },
+  {
+    "check": "codex-pre_task",
+    "module": "runtime_hooks.smoke_test",
+    "exit_code": 0
+  },
+  {
+    "check": "codex-post_task",
+    "module": "runtime_hooks.smoke_test",
+    "exit_code": 0
+  }
+]

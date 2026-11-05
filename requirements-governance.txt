@@ -1,0 +1,3 @@
+# Required by pinned framework governance_tools/runtime_phase_policy.py.
+# Order-application dependencies are defined later in product slice S00.
+PyYAML==6.0.3

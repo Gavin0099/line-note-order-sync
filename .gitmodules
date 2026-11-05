@@ -1,0 +1,4 @@
+[submodule "ai-governance-framework"]
+	path = ai-governance-framework
+	url = https://github.com/Gavin0099/ai-governance-framework.git
+	branch = main

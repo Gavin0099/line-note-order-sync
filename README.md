@@ -13,6 +13,9 @@ detects changes, and exports auditable order reports.
 2026-11-05：完成初步評估與開發切片規劃；尚無應用程式、資料庫或實機擷取結果。
 Windows UIA 留言擷取能力為 `NOT_EVALUATED`。
 
+已導入 repo 層級 AI Governance 設定；安裝、驗證與能力界線見
+[治理導入說明](docs/GOVERNANCE_ONBOARDING.md)，目前執行範圍見 [PLAN.md](PLAN.md)。
+
 - [可行性與範圍評估](docs/ASSESSMENT.md)
 - [開發 PLAN](docs/PLAN.md)
 - [SLICE 工作清單與驗收](docs/SLICES.md)

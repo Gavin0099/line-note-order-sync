@@ -1,0 +1,17 @@
+payload_layering:
+  version: '1.0.0'
+  repo_type: generic
+  l0_context:
+    always_load:
+    - governance/SYSTEM_PROMPT.md
+    - governance/AGENT.md
+    - PLAN.md
+    forbidden_load:
+    - governance/ARCHITECTURE.md
+    - governance/REVIEW_CRITERIA.md
+    - governance/HUMAN-OVERSIGHT.md
+    - governance/NATIVE-INTEROP.md
+    domain_contract_policy: skip
+  memory_policy: incremental
+  authority_table_path: governance/AUTHORITY.md
+  rule_registry_path: governance/RULE_REGISTRY.md

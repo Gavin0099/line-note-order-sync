@@ -1,0 +1,26 @@
+name: line-note-order-sync-contract
+plugin_version: "1.0.0"
+framework_interface_version: "1"
+framework_compatible: ">=1.0.0,<2.0.0"
+domain: line-note-groupbuy-order-reconciliation
+risk: medium
+risk_tier: medium
+risk_rationale: "Owner selected medium on 2026-11-05: buyer data and procurement quantities require completeness checks and human reconciliation."
+language: Python
+oversight: review-required
+documents:
+  - AGENTS.base.md
+  - PLAN.md
+  - governance/TESTING.md
+  - governance/ARCHITECTURE.md
+  - docs/ASSESSMENT.md
+  - docs/SLICES.md
+ai_behavior_override:
+  - AGENTS.base.md
+rule_roots:
+  - governance/rules
+validators:
+  - ai-governance-framework/governance_tools/architecture_drift_checker.py
+# This is the framework's DomainValidator; it does not validate order correctness.
+evidence_roots:
+  - artifacts

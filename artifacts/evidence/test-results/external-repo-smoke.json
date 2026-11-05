@@ -1,0 +1,44 @@
+{
+  "result_schema": "external_repo_smoke_result.v0.2",
+  "generated_at": "2026-11-05T10:18:20Z",
+  "ok": true,
+  "repo_root": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync",
+  "plan_path": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync\\PLAN.md",
+  "contract_path": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync\\contract.yaml",
+  "framework_root": "C:\\Users\\reiko\\Documents\\ChatGPT\\line-note-order-sync\\ai-governance-framework",
+  "framework_commit": "1f5b09e221096b3b4494d12e1db9e233e1c8de62",
+  "framework_worktree_clean": true,
+  "framework_worktree_changes": [],
+  "rules": [
+    "common",
+    "avalonia",
+    "cpp",
+    "csharp",
+    "gdscript",
+    "gl-hub-vendor-cmd",
+    "kernel-driver",
+    "python",
+    "refactor",
+    "swift"
+  ],
+  "pre_task_ok": true,
+  "session_start_ok": true,
+  "post_task_ok": null,
+  "post_task_cases": [],
+  "token_summary": {
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "total_tokens": null,
+    "token_source_summary": "unknown",
+    "token_observability_level": "none",
+    "provenance_warning": "not_provided_by_smoke",
+    "decision_usage_allowed": false,
+    "analysis_safe_for_decision": false
+  },
+  "warnings": [
+    "Assumption check missing before modification planning: missing=assumptions, alternative_root_causes, evidence, reframe_or_validation_step; why=the premise, alternatives, evidence, or validation step is not visible yet; next=state the missing items before choosing an implementation",
+    "Decision policy advisory: assumption evidence missing: missing=direct evidence that tests the stated assumption; why=the decision remains uncertain even if the assumption is plausible; next=collect a trace, spec, test, or usage evidence before a high-impact change",
+    "Decision policy advisory: proceeding under assumption: missing=confirmed evidence for the premise; why=this is a provisional action, not proof that the change is correct; next=keep the change reversible and run the targeted verification"
+  ],
+  "errors": []
+}

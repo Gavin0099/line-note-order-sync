@@ -1,0 +1,40 @@
+# Local product data and authentication material
+/data/
+/exports/
+/local-evidence/
+/.venv/
+/.pytest_cache/
+/.env
+/.env.*
+!/.env.example
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+credentials*.json
+token*.json
+
+# Generated governance diagnostics; committed evidence belongs under artifacts/evidence/
+/artifacts/session-closeout.txt
+/artifacts/governance/
+/*.bak.*
+
+# >>> ai-governance hygiene (managed by adopt_governance.py; do not edit inside markers) >>>
+# Runtime governance artifacts and Python bytecode are regenerated every
+# session. Tracking them leaves the working tree permanently dirty and buries
+# real changes. Committed memory/ and evidence files are intentionally kept.
+__pycache__/
+*.py[cod]
+artifacts/runtime/
+artifacts/session/
+artifacts/session-index.ndjson
+artifacts/governance/version_compatibility.json
+artifacts/*.db
+# any-depth copies (runtime writers can spill a nested artifacts/ tree)
+**/artifacts/runtime/
+**/artifacts/session/
+**/artifacts/session-index.ndjson
+**/artifacts/governance/version_compatibility.json
+**/artifacts/*.db
+# <<< ai-governance hygiene (managed) <<<
