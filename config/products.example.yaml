@@ -1,0 +1,14 @@
+# Synthetic example; source.kind is selected explicitly when binding this config.
+format_version: 1
+scope_key: synthetic-community
+note_key: synthetic-note-001
+default_sku: null
+products:
+  - sku: A
+    name: 合成商品 A
+    aliases: []
+    max_quantity: 99
+  - sku: B
+    name: 合成商品 B
+    aliases: []
+    max_quantity: 99

@@ -1,6 +1,6 @@
 # 開發 PLAN
 
-日期：2026-11-05。狀態：產品規劃完成，產品實作尚未開始。
+日期：2026-11-05。S00 契約與開發骨架已開始；實際進度見 root PLAN 與 SLICES 完成紀錄。
 目前 phase、授權範圍與 anti-goals 統一由 [root PLAN.md](../PLAN.md) 記錄；本檔保存產品設計。
 背景與外部依據見 [ASSESSMENT](ASSESSMENT.md)，逐片工作見 [SLICES](SLICES.md)。
 
