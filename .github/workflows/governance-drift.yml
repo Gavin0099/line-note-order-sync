@@ -21,6 +21,9 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}/ai-governance-framework
       PYTHONUTF8: "1"
     steps:
+      - name: Enable Git long paths on the Windows runner
+        if: runner.os == 'Windows'
+        run: git config --global core.longpaths true
       - uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -29,6 +32,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install the pinned runtime dependency
+        run: python -m pip install -r requirements-governance.txt
       - name: Install local hooks on the disposable runner
         run: python -m governance_tools.hook_installer --repo . --framework-root ai-governance-framework --format json
       - name: Validate governance and target-repo runtime smoke

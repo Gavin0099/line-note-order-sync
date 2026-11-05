@@ -13,10 +13,12 @@
 ## 新 clone 的安裝
 
 Python 3.12+ 與 Git 為前置需求；Windows 的 Git hooks 需要 Git for Windows 的 shell。
-框架核心與本 repo 的治理檢查使用標準函式庫，不需安裝應用程式依賴。
+目前 pinned framework 的 runtime phase policy 會載入 PyYAML；
+`requirements-governance.txt` 固定已驗證的版本，與未來產品相依分開。
 
 ```powershell
-git submodule update --init --recursive
+git -c core.longpaths=true submodule update --init --recursive
+python -m pip install -r requirements-governance.txt
 Push-Location ai-governance-framework
 try {
     python -X utf8 -m governance_tools.hook_installer --repo .. --framework-root .
@@ -28,6 +30,7 @@ python scripts/check_governance.py
 
 Git 不會把 `.git/hooks/` 跟著 clone。每個 clone 都要執行 installer；
 CI 在一次性 runner 上做同樣安裝與檢查，不假設開發者機器已有 hooks。
+Windows CI 在 checkout 前只替一次性 runner 設定 Git longpaths；未修改開發者機器的系統設定。
 此安裝方式不在目前 PowerShell 留下 `PYTHONPATH`，避免 Windows 路徑被 Git Bash
 當成不同分隔規則的搜尋路徑串接。檢查腳本只替自己的子程序設定 module 搜尋路徑。
 
@@ -87,6 +90,8 @@ try {
   post_task 由另一條 Codex adapter fixture smoke 驗證，不改寫外部 smoke receipt。
 - 真實 pre-commit 已觸發；pre-push 與遠端 CI 在交付時另行驗證，狀態看 PR 與交付報告。
 - 原生 host lifecycle、merge protection、LINE 操作與訂單功能保持未驗證。
+- 首輪遠端 CI 暴露 Windows submodule 長路徑與 Linux 缺少 PyYAML，已在同一 PR
+  補上 checkout 前置設定與 pinned runtime dependency；是否修復由後續 CI 結果確認。
 
 ## 驗收界線
 
