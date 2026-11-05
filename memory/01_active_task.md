@@ -8,4 +8,4 @@
 
 - Update this file when task state changes.
 
-- PR1/PR2 merged with final-head review and CI; S00 implemented/validated in OPEN PR3 for owner review; parser/DB/TXT/UIA unimplemented, S01 not started. <!-- memory_record_projection:active-task-summary:32b0bca07a096aeed4038476de82795bccb9730cfce34ce628c874e06c70c7d4 -->
+- Manual JSON POC in OPEN PR4 (depends on PR3); 100 tests pass, v2 reselection audit fixed, preview exports/poc-v2/index.html; final CI and owner review pending; no LINE/S06/merge. <!-- memory_record_projection:active-task-summary:1aa75ab86807e3760910f299aeb357b25d6cfdffc34891739843d12e498f0156 -->

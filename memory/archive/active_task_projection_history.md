@@ -10,3 +10,5 @@ projection superseded them. History only; not current state.
 - PR1 specification independently approved and merged; PR2 review and current-head CI remain before S00. <!-- memory_record_projection:active-task-summary:a01765c37238d68227f7f5c77ee8b6f2eae0514dd50b0dc452fbcdb67dbcbcf3 -->
 
 - PR1 merged; PR2 implementation independently approved with absolute-path P2 carried forward; final memory-only head checks and CI pending before conditional merge and S00. <!-- memory_record_projection:active-task-summary:1026158b2e67cf4015b5db4e334e598d7203f45ba31a867748c1668df014f582 -->
+
+- PR1/PR2 merged with final-head review and CI; S00 implemented/validated in OPEN PR3 for owner review; parser/DB/TXT/UIA unimplemented, S01 not started. <!-- memory_record_projection:active-task-summary:32b0bca07a096aeed4038476de82795bccb9730cfce34ce628c874e06c70c7d4 -->
