@@ -1,0 +1,54 @@
+# .governance/baseline.yaml
+# Written by governance_tools/adopt_governance.py — do not edit manually.
+# Verified by: python governance_tools/governance_drift_checker.py --repo .
+#
+# Semantic layers in this file:
+#   PROVENANCE  — who generated this baseline and from which commit
+#   INTEGRITY   — sha256 hashes + overridability of tracked files
+#   CONTRACT    — governance mandates that MUST be satisfied (enforced by drift checker)
+#   OBSERVED    — snapshot of repo structure at adoption time (informational, not enforced)
+
+# ── PROVENANCE ────────────────────────────────────────────────────────────────
+schema_version: "1"
+baseline_version: 1.0.0
+source_commit: 597477c77c404c3abd32d16c94c05a2d9e4fbffc
+framework_root: C:\Users\reiko\Documents\ChatGPT\line-note-order-sync\ai-governance-framework
+initialized_at: 2026-11-05T10:12:16Z
+initialized_by: governance_tools/adopt_governance.py
+
+# ── INTEGRITY ─────────────────────────────────────────────────────────────────
+# sha256.<file>: canonical-LF hash recorded at init/refresh time; "protected" files are hash-verified
+# overridable.<file>: protected = must not change | overridable = repo may extend freely
+sha256.AGENTS.base.md: d65823b9051d567ade1d6d82acd57118253523220dc7cc8badc655a0c24d2c4c
+sha256.PLAN.md: 3f18651a8360a5faceadc18192adbd337c7a6ae755dde069271eaf297ce911ba
+sha256.contract.yaml: 2614c2217fcc22694dfc570e724a6e829ee0c4bf13787a0e4c6769b290d10a01
+sha256.AGENTS.md: 3292bc5b2b945ce2bd0a59f4293c00d29d7d08bb9b5fb928f903cba76eed29c6
+overridable.AGENTS.base.md: protected
+overridable.PLAN.md: overridable
+overridable.contract.yaml: overridable
+overridable.AGENTS.md: overridable
+
+# ── CONTRACT (framework-enforced mandates) ────────────────────────────────────
+# Fields listed here are actively checked by drift checker; violations block ci/gate.
+# CONTRACT layer policy: only values that affect validation judgments belong here.
+#   Do NOT use this layer for metadata, notes, or domain-specific configuration.
+# plan_required_sections: ## headings that MUST be present in PLAN.md (governance mandate).
+#   Empty = no mandate enforced (adopt-existing default). Set explicitly to harden.
+# plan_freshness_threshold_days: CONTRACT OVERRIDE — changes the staleness threshold
+#   for plan_freshness check. Default: 14d (framework default) or PLAN.md Freshness header.
+contract_required_fields:
+  - name
+  - framework_interface_version
+  - framework_compatible
+  - domain
+
+# ── OBSERVED (repo snapshot — informational only, never enforced) ──────────────
+# plan_section_inventory: ## headings detected in PLAN.md at adoption/refresh time.
+#   Drift checker surfaces these for visibility but never fails on missing inventory items.
+plan_section_inventory:
+  - "## Current Phase"
+  - "## Active Sprint"
+  - "## Backlog"
+  - "## Decision Log"
+  - "## Known Risks"
+  - "## Anti-Goals"

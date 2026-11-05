@@ -1,0 +1,42 @@
+name: Governance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: ${{ github.workspace }}/ai-governance-framework
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install local hooks on the disposable runner
+        run: python -m governance_tools.hook_installer --repo . --framework-root ai-governance-framework --format json
+      - name: Validate governance and target-repo runtime smoke
+        run: python scripts/check_governance.py
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-${{ matrix.os }}
+          path: artifacts/runtime/governance-onboarding/checks/
+          if-no-files-found: ignore

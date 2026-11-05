@@ -1,0 +1,7 @@
+{
+  "schema": "external-tree-inventory-guard-identities.v1",
+  "repository_identities": [
+    "https://github.com/Gavin0099/line-note-order-sync.git",
+    "@repository-root"
+  ]
+}
