@@ -6,7 +6,7 @@
 
 ## Current Phase
 
-- [>] Phase G0 : repo 層級治理導入與本機驗證完成，交付 owner review；產品 S00–S09 尚未開始。
+- [>] Phase G0 : repo 層級治理導入與驗證完成；依 owner 授權修正、審查並條件式合併 PR #1、#2。
 - [ ] Phase M0 : S00 資料契約與開發骨架。
 - [ ] Phase M1 : S01 Windows UIA 單篇擷取驗證。
 - [ ] Phase M2 : S02–S05 手動匯入 MVP。
@@ -26,7 +26,8 @@
 - [x] 建立 Windows／Linux CI；實際遠端結果由 PR checks 與交付報告確認，不在本檔預填。
 
 本次 DONE：導入適用的 framework surfaces，完成本機直接相關驗證與實際 commit/push hook
-試驗，將結果及未驗證能力交付 review。保留原規劃 PR #1；不合併 PR。
+試驗，將結果及未驗證能力交付 review。依 2026-11-05 owner 新授權，先處理 PR #1，
+再審查／條件式合併 PR #2；兩者完成後開始 S00。
 
 ## Backlog
 
@@ -40,6 +41,8 @@
 - 2026-11-05：依 owner 指定完整導入 AI Governance，以 repo 內 pinned submodule 提供工具，
   使用框架既有安裝、F-7、記憶與驗證流程，不修改上游框架或另建治理規則體系。
 - 2026-11-05：Owner 選定中風險，理由為處理買家資料與叫貨數量，需完整性檢查與人工核對。
+- 2026-11-05：Owner 接受 MVP 同社群暱稱彙總及同名／改名風險，保留 occurrence 與人工修正。
+- 2026-11-05：Owner 授權依序處理兩個 PR、條件式合併，再開始 S00；暫停新增治理範圍。
 
 ## Known Risks
 
@@ -52,6 +55,6 @@
 
 ## Anti-Goals
 
-- 本次不實作 S00–S09 產品功能，不操作 LINE，不匯入真實買家資料。
+- PR #1、#2 合併前不開始 S00；之後僅實作 S00，不操作 LINE、不匯入真實買家資料。
 - 不修改 framework submodule 內容，不調降驗證、證據或 fail-closed 標準。
-- 不變更 repo 可見性或 branch protection，不合併、發布軟體版本或部署。
+- 不變更 repo 可見性或 branch protection，不發布軟體版本或部署；S00 另開 PR 交付。

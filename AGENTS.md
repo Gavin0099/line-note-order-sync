@@ -259,7 +259,8 @@ Prompt yourself:
 - What "cleanup" or "shortcut" behaviors have already caused pain here?
 -->
 
-- Do not use display names, text hashes, UIA RuntimeId or row positions as stable cross-snapshot identity.
+- MVP may group buyers by nickname within one community (`scope_key`), accepting same-name/rename risk as the owner decided. Preserve occurrences and manual split/merge corrections; absent author IDs alone do not require per-comment mapping.
+- Do not use nickname grouping, text hashes, UIA RuntimeId or row positions as proof of stable source-comment identity or edit/cancellation events.
 - Do not add totals from successive snapshots or infer cancellation from an incomplete capture.
 - Do not issue a formal procurement report from partial/unknown data or unresolved blocking review items.
 - Do not collect tokens, use private LINE endpoints, send messages, change notes, or process real buyer data as part of governance onboarding.
