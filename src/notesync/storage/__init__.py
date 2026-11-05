@@ -1,1 +1,1 @@
-"""Future SQLite infrastructure; no database is created by this scaffold."""
+"""SQLite infrastructure for immutable inputs and accepted versions."""

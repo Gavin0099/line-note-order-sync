@@ -1,1 +1,1 @@
-"""Future domain models: pure values, no filesystem, Windows or SQLite calls."""
+"""Pure domain values: no filesystem, Windows or SQLite calls."""

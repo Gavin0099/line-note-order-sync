@@ -10,8 +10,9 @@ detects changes, and exports auditable order reports.
 
 ## 目前狀態
 
-2026-11-05：PR #1 規劃、PR #2 治理導入已合併。S00 提供資料契約、合成案例與 CLI 骨架；
-目前僅有 help／version，尚無 parser、資料庫或實機擷取結果。
+2026-11-05：PR #1、#2 已合併，PR #3 的 S00 仍待 review。
+相依 POC 分支已實作手動 JSON 匯入、嚴格解析、SQLite、人工核對、接受快照及 CSV／HTML 報表。
+使用合成資料展示功能；尚未連接 LINE，也未完成實際來源試用。
 Windows UIA 留言擷取能力為 `NOT_EVALUATED`。
 
 已導入 repo 層級 AI Governance 設定；安裝、驗證與能力界線見
@@ -23,30 +24,32 @@ Windows UIA 留言擷取能力為 `NOT_EVALUATED`。
 - [S00 PRD](docs/PRD.md)
 - [資料契約與輸入格式](docs/DATA_CONTRACT.md)
 - [S01 擷取實驗模板（尚未實測）](docs/CAPTURE_FEASIBILITY.md)
+- [手動功能 POC：展示與操作](docs/MANUAL_POC.md)
 
 ## 建議起點
 
-先 review S00 的單篇資料契約與驗收案例，再執行 S01 的限時擷取驗證。
-手動匯入核心將沿 S02–S06 建立；S01 不可行時仍可繼續完成本機工具。
+先看 POC 的實際報表，再 review S00 與相依功能 PR。
+S01 的限時擷取實驗及 S06 實際來源試用保持獨立，不以手動 POC 代替。
 
 技術基線為 Python 3.12、SQLite、pytest；Windows 擷取套件獨立為選用相依。
 現階段不含定期同步、Google Sheets、網站後台、付款或物流。
 
-## 安裝與骨架驗證
+## 安裝並看 POC
 
-Python 3.12+；下列為 Windows PowerShell。產品骨架沒有 runtime 第三方相依或 Windows UIA 相依。
+Python 3.12／3.13；下列為 Windows PowerShell。產品沒有 runtime 第三方相依或 Windows UIA 相依。
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
 .\.venv\Scripts\notesync.exe --help
 .\.venv\Scripts\python.exe -m notesync --version
+.\.venv\Scripts\python.exe -m notesync demo
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-`parse`、`import`、`review`、`accept`、`export` 尚未實作，呼叫會失敗。
-目前測試只驗 CLI 骨架，不會解析 `tests/fixtures/` 的訂單案例；案例是後續 slice 的人工答案。
-`config/products.example.yaml` 與 JSON 範例都是合成資料。真實 TXT 格式尚未確認，不能直接匯入。
+`demo` 回傳可直接開啟的 HTML 路徑，展示問句阻擋、人工核對、重匯、部分拒絕與快照替換。
+CLI 支援 `parse`、`import`、`inspect`、`review`、`accept`、`export`；細節見 POC 操作文件。
+商品設定暫用 `config/products.example.json`，範例均為合成資料；YAML／真實 TXT 尚不支援。
 治理檢查需另裝 `requirements-governance.txt`，操作見治理導入說明。
 
 ## 資料與開源

@@ -1,6 +1,8 @@
 # 手動快照資料契約 v1
 
 日期：2026-11-05。這是 S02–S05 的實作契約；S00 尚無 importer、parser 或 SQLite schema。
+後續手動 POC 已實作 JSON 路徑，支援限制與命令見 [MANUAL_POC](MANUAL_POC.md)；
+手動 adapter 不接受 VERIFIED_COMPLETE，YAML／TXT、來源能力驗證與排程仍待後續切片。
 輸入範例：`tests/fixtures/manual_snapshot.example.json`；合成資料不得替代實際擷取證據。
 
 ## 輸入封套
