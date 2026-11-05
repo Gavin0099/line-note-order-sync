@@ -1,4 +1,4 @@
-name: Product scaffold
+name: Product tests
 
 on:
   pull_request:
@@ -30,5 +30,11 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Check the installed console entry point
         run: notesync --help
-      - name: Run S00 acceptance tests
+      - name: Run manual POC tests
         run: python -m pytest
+      - name: Generate the synthetic demonstration
+        run: python -m notesync demo --output artifacts/runtime/product-demo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manual-poc-${{ matrix.os }}-py${{ matrix.python }}
+          path: artifacts/runtime/product-demo/

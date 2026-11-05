@@ -1,4 +1,4 @@
-"""S00 acceptance only; parser and order-result tests start in S02."""
+"""CLI entry point behavior; order workflow is tested separately."""
 
 from __future__ import annotations
 
@@ -18,20 +18,20 @@ def test_scaffold_entrypoint_is_available_without_data_files(
     env.pop("PYTHONPATH", None)
     result = subprocess.run(
         [sys.executable, "-m", "notesync", *arguments], cwd=tmp_path,
-        env=env, capture_output=True, text=True, check=False,
+        env=env, capture_output=True, encoding="utf-8", check=False,
     )
     assert result.returncode == 0, result.stderr
     assert "notesync" in result.stdout
     if "--version" not in arguments:
-        assert "not implemented" in result.stdout
+        assert "Manual order POC" in result.stdout
     assert list(tmp_path.iterdir()) == []
 
 
-def test_unimplemented_import_command_fails_without_creating_a_database(tmp_path: Path) -> None:
+def test_unknown_command_fails_without_creating_a_database(tmp_path: Path) -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "notesync", "import", "missing.json"], cwd=tmp_path,
-        capture_output=True, text=True, check=False,
+        [sys.executable, "-m", "notesync", "not-a-command"], cwd=tmp_path,
+        capture_output=True, encoding="utf-8", check=False,
     )
     assert result.returncode == 2
-    assert "unrecognized arguments" in result.stderr
+    assert "invalid choice" in result.stderr
     assert list(tmp_path.iterdir()) == []

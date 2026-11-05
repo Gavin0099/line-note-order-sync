@@ -1,1 +1,1 @@
-"""Future manual/UIA source adapters; native dependencies remain optional."""
+"""Manual JSON source adapter; no native LINE capture implementation."""
