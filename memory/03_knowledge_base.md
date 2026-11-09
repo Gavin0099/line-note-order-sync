@@ -35,3 +35,11 @@
 - Fix commit: 5bdb20cd6e1f25adc8a474e3b1b35445eb970f37
 - Test evidence: tests/test_note_week.py::test_locate_post_retries_idle_scroll_without_accepting_another_card, 190 product tests passed with one platform skip, and live weekly export readback verified the only eligible closed post.
 - Daily record: memory/2026-11-09.md (memory_record, commit 5bdb20cd6e1f25adc8a474e3b1b35445eb970f37).
+
+## CANDIDATE / UNREVIEWED: Taipei cutoff parsing without platform timezone data
+
+- Root cause: Windows runners had neither a system IANA timezone database nor the optional Python timezone package. Importing the weekly parser raised before test collection.
+- Fix: use the platform Taipei timezone when present; fall back to UTC+08:00 for current LINE cutoff dates when the database is unavailable.
+- Fix commit: 3cbabc4b026e30dbf7d4ee35b7655565ee8dfa33
+- Test evidence: GitHub Actions run 42609754159 reproduced `ZoneInfoNotFoundError`; 190 product tests passed with timezone data disabled locally, and the Taipei midnight cutoff independently converted to the expected UTC instant.
+- Daily record: memory/2026-11-09.md (memory_record, commit 3cbabc4b026e30dbf7d4ee35b7655565ee8dfa33).
