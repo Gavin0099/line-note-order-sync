@@ -19,6 +19,9 @@ notesync = "notesync.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"notesync.adapters" = ["macos_ax_probe.swift", "macos_note_ocr.swift", "macos_line_navigation.swift"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"

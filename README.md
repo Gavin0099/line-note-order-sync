@@ -12,8 +12,9 @@ detects changes, and exports auditable order reports.
 
 2026-11-05：PR #1、#2 已合併，PR #3 的 S00 仍待 review。
 相依 POC 分支已實作手動 JSON 匯入、嚴格解析、SQLite、人工核對、接受快照及 CSV／HTML 報表。
-使用合成資料展示功能；尚未連接 LINE，也未完成實際來源試用。
-Windows UIA 留言擷取能力為 `NOT_EVALUATED`。
+手動訂單流程使用合成資料展示。本機擷取分支可讀取 Mac LINE 視窗的輔助使用文字，
+也可保存手動複製的 UTF-8 文字。所測 Mac LINE 版本的展開留言作者及正文
+未出現在輔助使用介面，實測範圍見擷取操作文件。
 
 已導入 repo 層級 AI Governance 設定；安裝、驗證與能力界線見
 [治理導入說明](docs/GOVERNANCE_ONBOARDING.md)，目前執行範圍見 [PLAN.md](PLAN.md)。
@@ -23,16 +24,24 @@ Windows UIA 留言擷取能力為 `NOT_EVALUATED`。
 - [SLICE 工作清單與驗收](docs/SLICES.md)
 - [S00 PRD](docs/PRD.md)
 - [資料契約與輸入格式](docs/DATA_CONTRACT.md)
-- [S01 擷取實驗模板（尚未實測）](docs/CAPTURE_FEASIBILITY.md)
+- [LINE 記事本擷取操作與實機驗收](docs/CAPTURE_FEASIBILITY.md)
 - [手動功能 POC：展示與操作](docs/MANUAL_POC.md)
 
 ## 建議起點
 
 先看 POC 的實際報表，再 review S00 與相依功能 PR。
-S01 的限時擷取實驗及 S06 實際來源試用保持獨立，不以手動 POC 代替。
+要在 Mac 整理一篇記事本，可在專案根目錄執行
+`.venv/bin/python -m notesync capture-note --chat 'LINE 群組完整名稱'`。
+指令會啟動 LINE 並嘗試開啟指定群組的記事本。選好貼文、確認留言範圍後，程式自動取圖，
+輸出逐則原文、可匯入 Google 試算表的兩欄 Excel，以及供網站交接的擷取 JSON。
+已手動開啟記事本時可使用 `capture-note --auto`。
+要整理 Mei 版媽近 7 天的已結團記事本，執行
+`.venv/bin/python -m notesync capture-week`。也可用 `--from` 和 `--to` 指定發文日期。
+Excel 在同一主題內依暱稱加總明確的獨立喊單；待判讀的改單、取消及不明商品編號保留空白。
+要交接到團購網站，請參照 [Mei 後台記事本匯入](docs/MEI_NOTEBOOK_IMPORT.md)。
 
-技術基線為 Python 3.12、SQLite、pytest；Windows 擷取套件獨立為選用相依。
-現階段不含定期同步、Google Sheets、網站後台、付款或物流。
+技術基線為 Python 3.12、SQLite、pytest。Mac 視窗擷取使用 Swift 與 macOS 輔助使用介面。
+本機指令可為既有 Mei 後台匯入預覽產生檔案；上傳 Google Sheets 與保存網站草稿仍由操作者執行。
 
 ## 安裝並看 POC
 
