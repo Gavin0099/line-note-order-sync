@@ -27,3 +27,11 @@
 - Fix commit: 44ca5e19488b4c12055631102848a2f6382a6183
 - Test evidence: tests/test_note_week.py::test_workbook_splits_items_and_never_combines_unconfirmed_nicknames checks exact cell readback for coded quantities and two unresolved occurrences in a third variant tab; 189 product tests passed, 1 platform case skipped.
 - Daily record: memory/2026-11-09.md (memory_record, commit 44ca5e19488b4c12055631102848a2f6382a6183).
+
+## CANDIDATE / UNREVIEWED: Retry a stationary LINE feed before ending relocation
+
+- Root cause: post relocation treated one zero-motion scroll as the feed boundary; the live UI temporarily stopped moving before reaching the target.
+- Fix: share the inventory's delayed retry between inventory and relocation; preserve timestamp, position and image checks before opening comments.
+- Fix commit: 5bdb20cd6e1f25adc8a474e3b1b35445eb970f37
+- Test evidence: tests/test_note_week.py::test_locate_post_retries_idle_scroll_without_accepting_another_card, 190 product tests passed with one platform skip, and live weekly export readback verified the only eligible closed post.
+- Daily record: memory/2026-11-09.md (memory_record, commit 5bdb20cd6e1f25adc8a474e3b1b35445eb970f37).

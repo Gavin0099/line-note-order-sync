@@ -12,3 +12,5 @@ projection superseded them. History only; not current state.
 - PR1 merged; PR2 implementation independently approved with absolute-path P2 carried forward; final memory-only head checks and CI pending before conditional merge and S00. <!-- memory_record_projection:active-task-summary:1026158b2e67cf4015b5db4e334e598d7203f45ba31a867748c1668df014f582 -->
 
 - PR1/PR2 merged with final-head review and CI; S00 implemented/validated in OPEN PR3 for owner review; parser/DB/TXT/UIA unimplemented, S01 not started. <!-- memory_record_projection:active-task-summary:32b0bca07a096aeed4038476de82795bccb9730cfce34ce628c874e06c70c7d4 -->
+
+- Closed-post Mac LINE weekly Excel command implemented and tested; publication range, cutoff gating, variants and incomplete nickname review covered. Live weekly run remains pending LINE sign-in. <!-- memory_record_projection:active-task-summary:5e20cf9ac1027c0d00b8eeef24a7706bdd70d8e3fdab9d3e2000eb3bc595af62 -->
