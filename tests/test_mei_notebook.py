@@ -37,7 +37,7 @@ def test_ocr_capture_to_website_preview_keeps_repeats_and_separates_products(tmp
         Comment('=甲', '兩組'), Comment('007', '2+3'), Comment('版媽', '結團')], 5)
     raw = Path(saved['capture']).read_bytes()
     assert saved['capture_sha256'] == sha256(raw).hexdigest()
-    assert Path(saved['text']).read_text().count('007\n+1') == 2
+    assert Path(saved['text']).read_text(encoding='utf-8').count('007\n+1') == 2
     products = tmp_path / 'products.json'
     products.write_bytes(data(PRODUCTS))
     output = tmp_path / 'mei.xlsx'
