@@ -150,3 +150,35 @@ def test_feed_inventory_walks_through_older_boundary_without_duplicate_posts(mon
     assert [(row.title, row.author, row.published) for row in posts] == [
         ("商品甲", "Mei版媽", date(2026, 11, 8)),
     ]
+
+
+def test_locate_post_retries_idle_scroll_without_accepting_another_card(monkeypatch):
+    target = post("已結團商品", "#1108結團")
+    wrong = Footer(target.footer.timestamp, .13, .75, .78, 7)
+    beginning, idle, correct = map(Path, ("before.png", "idle.png", "correct.png"))
+    frame = {"height": 806}
+    steps = iter([(0, frame, idle), (200, frame, correct)])
+    scrolls = []
+    checked = []
+
+    class View:
+        def capture(self):
+            return frame, beginning
+
+        def footers(self, _frame, image):
+            return [wrong if image == beginning else target.footer]
+
+        def movement(self, reference, image):
+            assert reference == target.image
+            checked.append(image)
+            return 0 if image == correct else None
+
+    def scroll(_view, image):
+        scrolls.append(image)
+        return next(steps)
+
+    monkeypatch.setattr(note_week, "scroll_feed", scroll)
+    monkeypatch.setattr(note_week, "sleep", lambda _: None)
+    assert note_week.locate_post(View(), target) == (target.footer, correct)
+    assert scrolls == [beginning, idle]
+    assert checked == [beginning, correct]

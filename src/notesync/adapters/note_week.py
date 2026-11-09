@@ -92,6 +92,15 @@ def scroll_feed(view: NotebookViewport, image: Path) -> tuple[int, dict, Path]:
     return moved, frame, next_image
 
 
+def advance_feed(view: NotebookViewport, image: Path) -> tuple[int, dict, Path]:
+    moved, frame, image = scroll_feed(view, image)
+    if moved == 0:
+        # A wheel event can briefly leave the LINE viewport unchanged mid-feed.
+        sleep(.5)
+        return scroll_feed(view, image)
+    return moved, frame, image
+
+
 def inventory(view: NotebookViewport, start: date, end: date, now: datetime) -> list[Post]:
     """Walk a single contiguous feed from its top to the older date boundary."""
     frame, image = view.capture()
@@ -150,15 +159,11 @@ def inventory(view: NotebookViewport, start: date, end: date, now: datetime) -> 
                 continue
             selected.append(Post(title_from_lines(body), author, possible_mei, published,
                                  "\n".join(line["text"] for line in body), entry, image, position))
-        moved, frame, image = scroll_feed(view, image)
+        moved, frame, image = advance_feed(view, image)
         if moved == 0:
-            # Check a second scroll before treating the current content as the end.
-            sleep(.5)
-            moved, frame, image = scroll_feed(view, image)
-            if moved == 0:
-                if any(row["world"] > boundary + 75 for row in lines):
-                    raise ContractError("清單底部仍有未確認發文日期的內容，未輸出週報")
-                return selected
+            if any(row["world"] > boundary + 75 for row in lines):
+                raise ContractError("清單底部仍有未確認發文日期的內容，未輸出週報")
+            return selected
         offset += moved
     raise ContractError("已達掃描上限且尚未確認日期邊界，請縮短日期範圍")
 
@@ -196,7 +201,7 @@ def locate_post(view: NotebookViewport, post: Post) -> tuple[Footer, Path]:
             predicted = (post.footer.y - entry.y) * height
             if motion is not None and abs(motion - predicted) <= 8:
                 return entry, image
-        if offset > post.position or (moved := scroll_feed(view, image))[0] == 0:
+        if offset > post.position or (moved := advance_feed(view, image))[0] == 0:
             break
         delta, frame, image = moved
         offset += delta
