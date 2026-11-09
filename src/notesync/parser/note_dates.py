@@ -1,12 +1,16 @@
 """Publication and cutoff dates displayed by LINE, interpreted in Taipei."""
 
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 import re
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from notesync.domain.models import ContractError, normalized
 
-TAIPEI = ZoneInfo("Asia/Taipei")
+try:
+    TAIPEI = ZoneInfo("Asia/Taipei")
+except ZoneInfoNotFoundError:
+    # Current LINE posts use UTC+08:00. Windows may have no IANA database.
+    TAIPEI = timezone(timedelta(hours=8), "Asia/Taipei")
 CLOSE = r"(?:截止收單|收單截止|結團|結單|截單|收單|截止|結束)"
 DATE = (
     r"(?:20[0-9]{2}[./年-](?:0?[1-9]|1[0-2])[./月-](?:0?[1-9]|[12][0-9]|3[01])日?"
