@@ -23,6 +23,7 @@ NS = {"x": MAIN}
     ("#1110結團", datetime(2026, 11, 11, tzinfo=TAIPEI)),
     ("#1109結團", datetime(2026, 11, 10, tzinfo=TAIPEI)),
     ("#20261109中午12點結單", datetime(2026, 11, 9, 12, tzinfo=TAIPEI)),
+    ("11/9晚上12點結團", None),
     ("結束日期：11/9 下午6:30", datetime(2026, 11, 9, 18, 30, tzinfo=TAIPEI)),
     ("#1109結團\n11/9 下午6:30截止", datetime(2026, 11, 9, 18, 30, tzinfo=TAIPEI)),
     ("#1109結團 #1110結團", None),

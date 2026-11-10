@@ -116,7 +116,7 @@ def _sheet_parts(sheets: ET.Element, relationships: ET.Element) -> dict[str, str
     return parts
 
 
-def _reconcile(book: ZipFile, parts: dict[str, str], series: str) -> tuple[dict[str, dict[str, int]], int, bool]:
+def _reconcile(book: ZipFile, parts: dict[str, str], series: str) -> tuple[dict[str, dict[str, int]], bool]:
     shared = ([_text(node) for node in _xml(book, "xl/sharedStrings.xml").findall("s:si", _NS)]
               if "xl/sharedStrings.xml" in book.namelist() else [])
     overview = _worksheet_rows(book, parts[_OVERVIEW])
@@ -126,9 +126,21 @@ def _reconcile(book: ZipFile, parts: dict[str, str], series: str) -> tuple[dict[
     selected = [row for index, row in overview.items() if index > 2 and _value(row, "A", shared) == series]
     if len(selected) != 1 or _value(selected[0], "D", shared) != "已擷取":
         raise ContractError("週報總覽需要一筆相符且已擷取的系列")
-    variants = {sku: _counts(_worksheet_rows(book, parts[f"{series} {sku}款"]), f"{series} {sku}款", shared)
-                for sku in ("A", "B")}
-    series_totals = _counts(_worksheet_rows(book, parts[series]), series, shared)
+    requested_titles = {series, f"{series} A款", f"{series} B款"}
+    detail = {}
+    for name, part in parts.items():
+        if name == _OVERVIEW:
+            continue
+        rows = _worksheet_rows(book, part)
+        title = _value(rows.get(1, {}), "A", shared)
+        if title in requested_titles:
+            if title in detail:
+                raise ContractError("週報有多張相同標題的系列明細，請先核對")
+            detail[title] = _counts(rows, title, shared)
+    if detail.keys() != requested_titles:
+        raise ContractError("週報缺少系列總表、A 款或 B 款")
+    variants = {sku: detail[f"{series} {sku}款"] for sku in ("A", "B")}
+    series_totals = detail[series]
     combined = Counter(variants["A"]) + Counter(variants["B"])
     units = sum(combined.values())
     if not combined or combined != series_totals or _value(selected[0], "F", shared) != units:
@@ -136,7 +148,7 @@ def _reconcile(book: ZipFile, parts: dict[str, str], series: str) -> tuple[dict[
     if len(combined) > 100 or units > _MAX_UNITS:
         raise ContractError("週報超過網站匯入的買家或數量上限")
     unresolved = _value(selected[0], "G", shared)
-    return variants, units, unresolved not in (None, "", 0, "0")
+    return variants, unresolved not in (None, "", 0, "0")
 
 
 def _append_element(parent: DomElement, name: str, attributes: dict[str, str]) -> DomElement:
@@ -217,7 +229,7 @@ def weekly_import_sheets(series: list[tuple[str, dict[str, dict[str, int]]]], *,
 
 
 def export_weekly_excel(source: Path, output: Path, series: str, *, verified_note: str | None = None) -> dict:
-    series = limited_text(series, 28)
+    series = limited_text(series, 237)
     if verified_note is not None:
         verified_note = limited_text(verified_note, 240)
     if source.suffix.lower() != ".xlsx" or output.suffix.lower() != ".xlsx":
@@ -241,7 +253,7 @@ def export_weekly_excel(source: Path, output: Path, series: str, *, verified_not
             sheet_parts = _sheet_parts(sheets, rels)
             if any(name in sheet_parts for name in SHEET_NAMES):
                 raise ContractError("週報已含網站匯入工作表，請用原始週報重新匯出")
-            variants, _, unresolved = _reconcile(book, sheet_parts, series)
+            variants, unresolved = _reconcile(book, sheet_parts, series)
             if verified_note and unresolved:
                 raise ContractError("所選系列仍有待核對留言，僅能匯出草稿")
             additions, summary = weekly_import_sheets([(series, variants)], verified_note=verified_note)

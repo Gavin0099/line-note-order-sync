@@ -98,6 +98,8 @@ def deadline_from_text(text: str, *, published: date) -> datetime | None:
                 chunks = re.findall(r"[0-9]+", clock)
                 hour = int(chunks[0])
                 minute = 30 if "半" in clock else int(chunks[1]) if len(chunks) == 2 else 0
+                if clock.startswith("晚上") and hour == 12:
+                    return None
                 if clock.startswith(("下午", "中午", "晚上")) and hour < 12:
                     hour += 12
                 elif clock.startswith(("上午", "早上", "凌晨")) and hour == 12:

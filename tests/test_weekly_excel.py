@@ -17,13 +17,13 @@ WEBSITE_BUYER = "合成網站買家"
 NS = {"s": SPREADSHEET}
 
 
-def write_weekly_source(path: Path, *, overview_total=21, wrong_buyer=False, pending=None, a_units=7):
-    names = ("週報總覽", SERIES, f"{SERIES} A款", f"{SERIES} B款")
+def write_weekly_source(path: Path, *, series=SERIES, overview_total=21, wrong_buyer=False, pending=None, a_units=7):
+    names = ("週報總覽", series, f"{series} A款", f"{series} B款")
     sheets = (
         [["合成週報"], ["商品／貼文", "發文日期", "結團截止（台北）", "擷取狀態", "已讀留言", "確認數量", "暱稱／數量待核對"],
          ["別的系列", "2026-11-04", None, "尚未結團，未擷取"],
-         [SERIES, "2026-11-05", None, "已擷取", 4, overview_total, pending]],
-        [[SERIES], ["暱稱", "數量"], [WEBSITE_BUYER, 9], ["合成買家甲", a_units], ["合成買家乙", 5]],
+         [series, "2026-11-05", None, "已擷取", 4, overview_total, pending]],
+        [[series], ["暱稱", "數量"], [WEBSITE_BUYER, 9], ["合成買家甲", a_units], ["合成買家乙", 5]],
         [[names[2]], ["暱稱", "數量"], [WEBSITE_BUYER, 5], ["另一位同量買家" if wrong_buyer else "合成買家甲", a_units]],
         [[names[3]], ["暱稱", "數量"], [WEBSITE_BUYER, 4], ["合成買家乙", 5]],
     )
@@ -80,6 +80,13 @@ def test_conflicting_breakdown_refuses_even_with_manual_confirmation(tmp_path, o
     with pytest.raises(ContractError, match="暱稱或數量"):
         export_weekly_excel(source, output, SERIES, verified_note="fixture-post")
     assert not output.exists()
+
+
+def test_uses_original_series_title_when_tab_names_are_sanitized_and_shortened(tmp_path):
+    series = "合成/需要縮短的系列：" + "長" * 35
+    source = write_weekly_source(tmp_path / "weekly.xlsx", series=series)
+    output = tmp_path / "website.xlsx"
+    assert export_weekly_excel(source, output, series)["units"] == 21
 
 
 def test_pending_counts_allow_draft_but_block_declared_complete(tmp_path):
