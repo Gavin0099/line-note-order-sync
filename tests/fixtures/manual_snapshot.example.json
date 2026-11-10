@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "source": {
+    "kind": "line_openchat_note",
+    "scope_key": "synthetic-community",
+    "note_key": "synthetic-note-001"
+  },
+  "captured_at": "2026-11-05T12:00:00+08:00",
+  "adapter_version": "manual-json-v1",
+  "completeness": {
+    "status": "DECLARED_COMPLETE",
+    "method": "Synthetic example: two independent rows checked against a fixed hand-written list. Not a LINE capture.",
+    "operator": "synthetic-operator",
+    "declared_at": "2026-11-05T12:05:00+08:00",
+    "evidence_refs": ["synthetic:two-independent-comments"]
+  },
+  "comments": [
+    {"position": 0, "display_name": "合成買家甲", "text": "A+1 B+2", "source_comment_id": null, "source_author_id": null, "source_created_at": null},
+    {"position": 1, "display_name": "合成買家乙", "text": "Ａ＋２", "source_comment_id": null, "source_author_id": null, "source_created_at": null}
+  ]
+}

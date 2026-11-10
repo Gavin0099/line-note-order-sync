@@ -1,0 +1,25 @@
+{
+  "fixture_kind": "synthetic-handwritten-scenarios",
+  "status": "S03-S05 acceptance specification; not implemented or executed by S00",
+  "cases": [
+    {"id": "no-author-id-50", "input_fixture": "no_id_50.json", "expected": "One nickname group, A=50; no per-comment mapping; preserve all 50 occurrences."},
+    {"id": "same-name", "input": "Two independent rows in one scope, nickname 合成甲, A+1 and A+2", "expected": "One group A=3; user may split by occurrence with audit record."},
+    {"id": "rename", "input": "One row 合成甲 A+1, another 合成乙 A+2 in same scope", "expected": "Two groups, A=1 and A=2; manual merge allowed, raw names unchanged."},
+    {"id": "scope-isolation", "input": "Same nickname in two source scopes, each A+1", "expected": "Two separate groups; no automatic cross-scope merge."},
+    {"id": "identical-occurrences", "input": "Two independently confirmed rows with same nickname and text A+1", "expected": "Two occurrences, total A=2; content hash does not erase a row."},
+    {"id": "overlap-uncertain", "input": "Two identical rows with uncertain copied overlap", "expected": "Blocking review; official export refused until clarified."},
+    {"id": "missing-name", "input": "No author ID and blank display name, A+1", "expected": "Keep row; blocking review; do not invent buyer."},
+    {"id": "repeat-import", "input": "Import and accept identical batch three times", "expected": "Current quantities and effective row count unchanged."},
+    {"id": "replace-snapshot", "input": "Accepted complete snapshot A=2, select another complete snapshot A=3", "expected": "Current A=3, historical A=2 retained; never A=5."},
+    {"id": "old-file-late", "input": "Older source snapshot imported after current accepted snapshot", "expected": "Import time does not replace accepted version automatically."},
+    {"id": "partial-missing-row", "input": "Partial snapshot omits a previously accepted row", "expected": "Preserve current accepted version; no deletion/cancellation inference, no official export from partial."},
+    {"id": "unknown", "input": "Unknown completeness with all visible rows parsed", "expected": "May save and export DRAFT for review; cannot accept for official report."},
+    {"id": "empty-complete", "input": "Empty comments list with independently verified completeness", "expected": "Zero orders allowed after explicit acceptance, not inferred from absence of visible rows."},
+    {"id": "reparse", "input": "Same raw input with new parser or product config", "expected": "New parse run, old result retained; explicit acceptance required; old manual decisions not auto-copied."},
+    {"id": "accept-failure", "input": "Inject failure midway through accepted-version transaction", "expected": "Original accepted version unchanged; no mixed current result."},
+    {"id": "human-report", "input": "Accepted DECLARED_COMPLETE snapshot", "expected": "Filename and manifest show HUMAN_DECLARED and source time; operator, declaration time, method and evidence present."},
+    {"id": "declaration-evidence-missing", "input": "DECLARED_COMPLETE without operator or evidence reference", "expected": "Official acceptance/export refused; not silently upgraded."},
+    {"id": "csv-formula", "input": "Buyer name begins with =, +, - or @", "expected": "Export safely neutralizes formula prefix; raw stored text unchanged; quoting alone insufficient."},
+    {"id": "locked-note", "input": "S08 captures a newer snapshot for LOCKED note", "expected": "Review only; accepted/delivered procurement version unchanged; scheduler cannot unlock."}
+  ]
+}

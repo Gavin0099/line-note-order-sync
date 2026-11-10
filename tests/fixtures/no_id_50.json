@@ -1,0 +1,421 @@
+{
+  "format_version": 1,
+  "source": {
+    "kind": "line_openchat_note",
+    "scope_key": "synthetic-community",
+    "note_key": "synthetic-note-001"
+  },
+  "captured_at": "2026-11-05T12:00:00+08:00",
+  "adapter_version": "manual-json-v1",
+  "completeness": {
+    "status": "DECLARED_COMPLETE",
+    "method": "Synthetic: 50 separately listed independent order occurrences, no copied overlap. Not a LINE capture.",
+    "operator": "synthetic-operator",
+    "declared_at": "2026-11-05T12:05:00+08:00",
+    "evidence_refs": [
+      "synthetic:50-independent-A-plus-1-orders"
+    ]
+  },
+  "comments": [
+    {
+      "position": 0,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 1,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 2,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 3,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 4,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 5,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 6,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 7,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 8,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 9,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 10,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 11,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 12,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 13,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 14,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 15,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 16,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 17,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 18,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 19,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 20,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 21,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 22,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 23,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 24,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 25,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 26,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 27,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 28,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 29,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 30,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 31,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 32,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 33,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 34,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 35,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 36,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 37,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 38,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 39,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 40,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 41,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 42,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 43,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 44,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 45,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 46,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 47,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 48,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    },
+    {
+      "position": 49,
+      "display_name": "合成五十筆買家",
+      "text": "A+1",
+      "source_comment_id": null,
+      "source_author_id": null,
+      "source_created_at": null
+    }
+  ]
+}
