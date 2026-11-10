@@ -6,9 +6,9 @@
 
 ## 1. 產品目標與邊界
 
-首個使用者是在 Windows 上經營 LINE 團購的單一操作者。
+首輪擷取驗證在 Mac LINE 上，由單一操作者開啟記事本。
 先支援單篇商品記事本、該篇的多 SKU、單機 SQLite 與 CLI。
-同一資料契約讓手動匯入與未來 Windows 擷取可以替換。
+擷取先產生本機原始證據，再逐筆核對並整理成手動匯入快照。
 
 MVP 工作流程：設定商品 → 匯入留言快照 → 檢視解析與異常 → 完成人工核對 →
 選定目前快照 → 輸出買家明細、商品統計與來源資訊。
@@ -21,7 +21,8 @@ MVP 工作流程：設定商品 → 匯入留言快照 → 檢視解析與異常
 ```mermaid
 flowchart TD
     Manual[手動匯入 Adapter] --> Snapshot[來源快照與原始留言]
-    UIA[Windows UIA Adapter：待驗證] --> Snapshot
+    Capture[Mac LINE 唯讀擷取] --> Evidence[本機原始證據]
+    Evidence --> Manual
     Snapshot --> Parse[純函式 Parser 與商品設定]
     Parse --> Review[異常審核與快照接受]
     Review --> Projection[目前接受的訂單投影]
@@ -36,7 +37,7 @@ flowchart TD
 - Parser 為確定性的純函式，同輸入與同設定得到同結果；不存檔、不查 LINE。
 - Reconciliation 決定接受哪份快照及哪些解析結果，不猜來源沒有提供的 ID。
 - Storage 管理版本、約束與交易；Exporter 僅讀取已選定的資料版本。
-- CLI 串接流程，Windows 依賴延後載入；未安裝 UIA 套件仍可使用全部手動功能。
+- CLI 串接流程。Mac 擷取由指令按需啟動，手動匯入可在不同平台獨立執行。
 
 建議使用標準函式庫的 `dataclasses`、`argparse`、`sqlite3`、`csv`，
 YAML 設定只加入必要的解析相依。先不引入 ORM、Web framework 或外部 AI 服務。
@@ -61,7 +62,7 @@ line-note-order-sync/
 ├── src/notesync/
 │   ├── cli.py
 │   ├── domain/models.py
-│   ├── adapters/{base,manual_import,windows_uia_probe}.py
+│   ├── adapters/                 # 手動匯入、Mac 擷取與原始證據
 │   ├── parser/{normalize,order_parser}.py
 │   ├── reconcile/order_reconciler.py
 │   ├── storage/sqlite.py

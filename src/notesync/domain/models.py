@@ -7,6 +7,9 @@ import re
 import unicodedata
 
 
+MAX_NOTE_COMMENTS = 1000
+
+
 class ContractError(ValueError):
     """Input or requested transition violates the manual POC contract."""
 
