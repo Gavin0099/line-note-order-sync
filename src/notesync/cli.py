@@ -42,6 +42,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     note.add_argument("--review-transcription", action="store_true", help="重播時逐筆核對並修正暱稱或正文")
     note.add_argument("--item-codes", nargs="+", help="已在本文核對的商品代號或中文品名，供兩欄 Excel 計算")
     week = commands.add_parser("capture-week", help="擷取 Mei 版媽已結團貼文並匯出同一份 Excel")
+    weekly_export = commands.add_parser("weekly-export", help="替既有 LINE 週報補上網站匯入工作表")
+    weekly_export.add_argument("source", type=Path)
+    weekly_export.add_argument("--series", required=True, help="週報中的系列名稱")
+    weekly_export.add_argument("--output", required=True, type=Path, help="全新的 .xlsx 路徑")
+    weekly_export.add_argument("--verified-note", help="人工核對原始 LINE 貼文完整後，填入該貼文的固定識別")
     week.add_argument("--from", dest="start_date", help="發文起日 YYYY-MM-DD，含當日")
     week.add_argument("--to", dest="end_date", help="發文迄日 YYYY-MM-DD，含當日")
     week.add_argument("--chat", help="LINE 群組完整名稱，預設使用本機設定")
@@ -106,6 +111,9 @@ def dispatch(args: argparse.Namespace):
     if args.command == "demo":
         from notesync.demo import run_demo
         return run_demo(args.output)
+    if args.command == "weekly-export":
+        from notesync.exporters.weekly_excel import export_weekly_excel
+        return export_weekly_excel(args.source, args.output, args.series, verified_note=args.verified_note)
     if args.command == "capture-week":
         from notesync.adapters.note_week import capture_week
         return capture_week(args.start_date, args.end_date, args.chat, args.output)

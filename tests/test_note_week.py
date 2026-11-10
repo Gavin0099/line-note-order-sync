@@ -64,7 +64,7 @@ def test_workbook_splits_items_and_never_combines_unconfirmed_nicknames(tmp_path
                           [("甲", "A+1B+2"), ("甲", "A+1（共2）"), ("測試...", "C+9"), ("測試...", "C+9")]),
         note_week.WeekRow(post("未結團", "#1110結團"), NOW, "尚未結團，未擷取", []),
     ]
-    note_week.weekly_workbook(destination, POSTED, TODAY, rows)
+    assert note_week.weekly_workbook(destination, POSTED, TODAY, rows) == {"included_series": 0, "units": 0}
     with ZipFile(destination) as archive:
         sheets = ElementTree.fromstring(archive.read("xl/workbook.xml"))
         assert [s.attrib["name"] for s in sheets.findall(".//x:sheet", NS)] == [
@@ -109,13 +109,38 @@ def test_capture_week_opens_only_ended_posts(monkeypatch, tmp_path):
         return selected.footer, Path("fixture.png")
 
     monkeypatch.setattr(note_week, "locate_post", locate)
-    monkeypatch.setattr(note_week, "collect_comments", lambda *_, **_kw: [Comment("甲", "A+1"), Comment("甲", "B+2")])
+    monkeypatch.setattr(note_week, "collect_comments", lambda *_, **_kw: [Comment("甲", "A+5 B+4"), Comment("乙", "A+7 B+5")])
     result = note_week.capture_week(None, None, "測試群", None)
     assert opened == ["剛截止"]
     assert result["posts"] == 4 and result["captured"] == 1 and result["open"] == 2
+    assert result["website_import"] == {
+        "included_series": 1, "completeness": "PARTIAL", "units_by_variant": {"A": 12, "B": 9},
+        "units": 21, "buyer_packages": 2, "item_rows": 4,
+    }
     with ZipFile(result["excel"]) as archive:
-        assert cells(archive, 1)["F5"] == "3"
+        assert cells(archive, 1)["F5"] == "21"
         assert cells(archive, 1)["D6"] == "截止日未確認，未擷取"
+        packing = cells(archive, 2)
+        assert [(packing[f"J{i}"], int(packing[f"G{i}"])) for i in range(5, 9)] == [
+            ("A", 5), ("A", 7), ("B", 4), ("B", 5),
+        ]
+        assert cells(archive, 3)["B2"] == "PARTIAL"
+
+
+def test_multiple_series_keep_product_codes_separate(tmp_path):
+    path = tmp_path / "report.xlsx"
+    summary = note_week.weekly_workbook(path, POSTED, TODAY, [
+        note_week.WeekRow(post("系列一", ""), NOW, "已擷取", [("甲", "A+1 B+2")]),
+        note_week.WeekRow(post("系列二", ""), NOW, "已擷取", [("甲", "A+3 B+4")]),
+        note_week.WeekRow(post("系列三待核對", ""), NOW, "已擷取", [("乙...", "A+8 B+8"), ("乙", "A+1 B+1")]),
+    ])
+    assert summary["included_series"] == 2
+    assert summary["units"] == 10
+    with ZipFile(path) as archive:
+        packing = cells(archive, 2)
+        assert [packing[f"J{i}"] for i in range(5, 9)] == ["001-A", "001-B", "002-A", "002-B"]
+        assert [packing[f"A{i}"] for i in range(5, 9)] == ["001"] * 4
+        assert "J9" not in packing
 
 
 def test_feed_inventory_walks_through_older_boundary_without_duplicate_posts(monkeypatch):

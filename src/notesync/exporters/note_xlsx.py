@@ -24,6 +24,7 @@ class Worksheet:
     widths: tuple[int, ...]
     header_row: int
     merge_title: bool = False
+    hidden: bool = False
 
 
 def text_cell(address: str, value: str) -> str:
@@ -84,7 +85,8 @@ def write_workbook(path: Path, worksheets: list[Worksheet]) -> None:
             suffix = f" ({repeat})"
             name = root[:31 - len(suffix)] + suffix
         names.add(name.casefold())
-        sheets.append(f'<sheet name={quoteattr(name)} sheetId="{index}" r:id="rId{index}"/>')
+        state = ' state="hidden"' if sheet.hidden else ''
+        sheets.append(f'<sheet name={quoteattr(name)} sheetId="{index}" r:id="rId{index}"{state}/>')
         relationships.append(f'<Relationship Id="rId{index}" Type="{DOC_REL}/worksheet" '
                              f'Target="worksheets/sheet{index}.xml"/>')
         types.append(f'<Override PartName="/xl/worksheets/sheet{index}.xml" '

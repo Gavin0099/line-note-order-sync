@@ -18,6 +18,8 @@
 
 ## Active Sprint
 
+- [x] LINE 週報與 Mei 交接。原 `capture-week` 同檔產生「包書明細」，僅帶入已擷取、沒有待核對留言且可與總表對齊的 A、B 款。歷史週報可用 `weekly-export` 加入同一格式。以既有週報重播匯出 21 件，網站正式環境保存與讀回另行驗證。
+
 - [x] PR #1 審查修正：暱稱彙總、S08 完整性／多篇／結團、人工宣告標記與效益量測。
 - [x] PR #2 獨立 final-head 審查及 Windows／Linux CI；main 合併結果與已審 tree 一致。
 - [x] S00 PRD／資料契約、商品設定、合成正反案例、擷取模板與可安裝 CLI 骨架。

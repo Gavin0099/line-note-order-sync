@@ -14,6 +14,7 @@ from notesync.adapters.note_auto import Footer, NotebookViewport, collect_commen
 from notesync.adapters.note_ocr import CaptureCancelled, capture_frame, header_key, prompt, run_native
 from notesync.domain.models import MAX_NOTE_COMMENTS, ContractError
 from notesync.exporters.note_xlsx import Worksheet, write_workbook
+from notesync.exporters.weekly_excel import weekly_import_sheets
 from notesync.parser.note_dates import TAIPEI, deadline_from_text, publication_date, report_dates, reviewed_cutoff
 from notesync.parser.note_quantity import buyer_item_totals, incomplete_nickname, observed_item_codes
 
@@ -208,12 +209,13 @@ def locate_post(view: NotebookViewport, post: Post) -> tuple[Footer, Path]:
     raise ContractError("貼文清單已變更或定位不確定，未展開這篇留言")
 
 
-def weekly_workbook(path: Path, start: date, end: date, rows: list[WeekRow]) -> None:
+def weekly_workbook(path: Path, start: date, end: date, rows: list[WeekRow]) -> dict:
     overview: list[tuple] = [
         (f"Mei 版媽｜{start} 至 {end}",),
         ("商品／貼文", "發文日期", "結團截止（台北）", "擷取狀態", "已讀留言", "確認數量", "暱稱／數量待核對"),
     ]
     sheets = []
+    import_series = []
     for entry in rows:
         unresolved = sum(incomplete_nickname(name) for name, _ in entry.comments)
         pairs = [(name, body) for name, body in entry.comments if not incomplete_nickname(name)]
@@ -230,6 +232,11 @@ def weekly_workbook(path: Path, start: date, end: date, rows: list[WeekRow]) -> 
                          quantity if entry.status == "已擷取" else None, pending or None))
         if entry.status != "已擷取":
             continue
+        if codes == ["A", "B"] and not pending:
+            variants = {code: {name: counts[code] for name, counts in totals.items() if counts and code in counts}
+                        for code in codes}
+            if all(variants.values()) and sum(sum(counts.values()) for counts in variants.values()) == quantity:
+                import_series.append((entry.post.title, variants))
         heading = [(entry.post.title,), ("暱稱", "數量")]
         rows_by_buyer = [(name, counts.total() if counts is not None else None) for name, counts in totals.items()]
         rows_by_buyer += [(f"{name}（暱稱待核對）", None) for name, _ in entry.comments if incomplete_nickname(name)]
@@ -243,7 +250,16 @@ def weekly_workbook(path: Path, start: date, end: date, rows: list[WeekRow]) -> 
                 detail.extend((f"{name}（暱稱待核對）", None) for name, body in entry.comments
                               if incomplete_nickname(name) and code in observed_item_codes([(name, body)]))
                 sheets.append(Worksheet(tab, [(label,), ("暱稱", "數量"), *detail], (44, 14), 2, True))
-    write_workbook(path, [Worksheet("週報總覽", overview, (39, 15, 23, 22, 15, 15, 22), 2), *sheets])
+    import_sheets = []
+    result: dict = {"included_series": 0, "units": 0}
+    if import_series:
+        try:
+            import_sheets, summary = weekly_import_sheets(import_series)
+            result = {"included_series": len(import_series), **summary}
+        except ContractError as exc:
+            result["error"] = str(exc)
+    write_workbook(path, [Worksheet("週報總覽", overview, (39, 15, 23, 22, 15, 15, 22), 2), *import_sheets, *sheets])
+    return result
 
 
 def capture_week(start: str | None, end: str | None, chat: str | None, output: Path | None) -> dict:
@@ -317,8 +333,9 @@ def capture_week(start: str | None, end: str | None, chat: str | None, output: P
                 view = None
     with TemporaryDirectory(dir=destination.parent, prefix=".line-week-") as staging:
         draft = Path(staging) / "週報.xlsx"
-        weekly_workbook(draft, first, last, rows)
+        website_import = weekly_workbook(draft, first, last, rows)
         os.link(draft, destination)
     return {"excel": str(destination.resolve()), "from": str(first), "to": str(last),
+            "website_import": website_import,
             "posts": len(rows), "captured": sum(row.status == "已擷取" for row in rows),
             "open": sum(row.status == "尚未結團，未擷取" for row in rows)}
