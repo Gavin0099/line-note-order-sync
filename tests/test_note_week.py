@@ -5,8 +5,8 @@ from zipfile import ZipFile
 
 import pytest
 
-from notesync.adapters import note_week
-from notesync.adapters.note_auto import Footer
+from notesync.adapters import note_auto, note_week
+from notesync.adapters.note_auto import Footer, NotebookViewport
 from notesync.adapters.note_ocr import Comment
 from notesync.domain.models import ContractError
 from notesync.exporters.note_xlsx import MAIN
@@ -25,6 +25,13 @@ NS = {"x": MAIN}
     ("#20261109中午12點結單", datetime(2026, 11, 9, 12, tzinfo=TAIPEI)),
     ("11/9晚上12點結團", None),
     ("結束日期：11/9 下午6:30", datetime(2026, 11, 9, 18, 30, tzinfo=TAIPEI)),
+    ("截止：11/10 11:30 PM", datetime(2026, 11, 10, 23, 30, tzinfo=TAIPEI)),
+    ("11/10 12:30 a.m. 收單", datetime(2026, 11, 10, 0, 30, tzinfo=TAIPEI)),
+    ("截止：11/10 12:30 PM", datetime(2026, 11, 10, 12, 30, tzinfo=TAIPEI)),
+    ("11/10 晚上12點截止", None),
+    ("截止：11/10 11:30 XM", None),
+    ("截止：11/10 11:305", None),
+    ("#1110結團\n11/10 11:30 XM截止", None),
     ("#1109結團\n11/9 下午6:30截止", datetime(2026, 11, 9, 18, 30, tzinfo=TAIPEI)),
     ("#1109結團 #1110結團", None),
     ("#1109結團，結單延期", None),
@@ -101,6 +108,8 @@ def test_capture_week_opens_only_ended_posts(monkeypatch, tmp_path):
         post("時間未到", "11/9 下午6:01收單"),
         post("剛截止", "11/9 下午6:00收單"),
         post("日期不明", "售完為止"),
+        post("晚上才截止", "截止：11/9 11:30 PM"),
+        post("午夜寫法不明", "11/9 晚上12點截止"),
     ])
     monkeypatch.setattr(note_week, "prompt", lambda message: "")
     opened = []
@@ -113,7 +122,7 @@ def test_capture_week_opens_only_ended_posts(monkeypatch, tmp_path):
     monkeypatch.setattr(note_week, "collect_comments", lambda *_, **_kw: [Comment("甲", "A+5 B+4"), Comment("乙", "A+7 B+5")])
     result = note_week.capture_week(None, None, "測試群", None)
     assert opened == ["剛截止"]
-    assert result["posts"] == 4 and result["captured"] == 1 and result["open"] == 2
+    assert result["posts"] == 6 and result["captured"] == 1 and result["open"] == 3
     assert result["website_import"] == {
         "included_series": 1, "completeness": "PARTIAL", "units_by_variant": {"A": 12, "B": 9},
         "units": 21, "buyer_packages": 2, "item_rows": 4,
@@ -121,6 +130,9 @@ def test_capture_week_opens_only_ended_posts(monkeypatch, tmp_path):
     with ZipFile(result["excel"]) as archive:
         assert cells(archive, 1)["F5"] == "21"
         assert cells(archive, 1)["D6"] == "截止日未確認，未擷取"
+        assert cells(archive, 1)["C7"] == "2026-11-09 23:30"
+        assert cells(archive, 1)["D7"] == "尚未結團，未擷取"
+        assert cells(archive, 1)["D8"] == "截止日未確認，未擷取"
         packing = cells(archive, 2)
         assert [(packing[f"J{i}"], int(packing[f"G{i}"])) for i in range(5, 9)] == [
             ("A", 5), ("A", 7), ("B", 4), ("B", 5),
@@ -150,6 +162,7 @@ def test_feed_inventory_walks_through_older_boundary_without_duplicate_posts(mon
 
     frames = iter([
         {"height": 806, "lines": [line("Mei版媽", .12, .2), line("#客製化 #商品甲 #1108結團", .04, .26),
+                                  line("11月2日", .035, .38), line("11月1日", .035, .43),
                                   line("11月8日 上午9:30", .035, .72)]},
         {"height": 806, "lines": [line("11月8日 上午9:30", .035, .348),
                                   line("Ray版媽", .12, .417), line("#商品乙 #1108結團", .04, .47),
@@ -161,21 +174,49 @@ def test_feed_inventory_walks_through_older_boundary_without_duplicate_posts(mon
                                   line("11月1日 上午9:30", .035, .92)]},
     ])
 
-    class View:
-        width, top, height = 428, .09, 806
+    view = NotebookViewport(Path("ocr"), Path("controls"), Path("."), 0, 428, 806, .09)
+    names = iter(map(Path, ("first.png", "second.png", "third.png")))
+    verified = {"first.png": (), "second.png": (259, 616), "third.png": (316, 487, 721)}
 
-        def capture(self):
-            return next(frames), Path("fixture.png")
+    def capture():
+        return {"width": 428, **next(frames)}, next(names)
+
+    def native(arguments):
+        _, verb, image, _x, y, _scale = arguments
+        assert verb == "bubble"
+        return b'{"visible":true}' if round(float(y) * 806) in verified[image] else b'{"visible":false}'
 
     def advance(view, _image):
         frame, image = view.capture()
         return 300, frame, image
 
     monkeypatch.setattr(note_week, "scroll_feed", advance)
-    posts = note_week.inventory(View(), date(2026, 11, 3), TODAY, NOW)
+    monkeypatch.setattr(view, "capture", capture)
+    monkeypatch.setattr(note_auto, "run_native", native)
+    posts = note_week.inventory(view, date(2026, 11, 3), TODAY, NOW)
     assert [(row.title, row.author, row.published) for row in posts] == [
         ("商品甲", "Mei版媽", date(2026, 11, 8)),
     ]
+
+
+@pytest.mark.parametrize("next_author", ["Ray版媽", "一般成員"])
+def test_feed_inventory_refuses_to_join_cards_across_an_unverified_footer(monkeypatch, next_author):
+    class View:
+        width = 428
+
+        def capture(self):
+            rows = [("Mei版媽", .12, .20), ("#漏驗商品 #1108結團", .035, .25),
+                    ("11月8日 上午9:30", .035, .40), (next_author, .12, .48),
+                    ("#另一商品", .035, .53), ("11月7日 上午9:30", .035, .78)]
+            return {"width": 428, "height": 806,
+                    "lines": [dict(text=text, x=x, y=y, h=.018) for text, x, y in rows]}, Path("feed.png")
+
+        def footers(self, _frame, _image):
+            return [Footer("11月7日上午9:30", .125, .754, .798, 1)]
+
+    monkeypatch.setattr(note_week, "advance_feed", lambda view, _image: (0, *view.capture()))
+    with pytest.raises(ContractError, match="可能有未驗證的貼文頁尾"):
+        note_week.inventory(View(), date(2026, 11, 3), TODAY, NOW)
 
 
 def test_locate_post_retries_idle_scroll_without_accepting_another_card(monkeypatch):

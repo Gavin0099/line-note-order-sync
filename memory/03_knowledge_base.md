@@ -43,3 +43,27 @@
 - Fix commit: 3cbabc4b026e30dbf7d4ee35b7655565ee8dfa33
 - Test evidence: GitHub Actions run 42609754159 reproduced `ZoneInfoNotFoundError`; 190 product tests passed with timezone data disabled locally, and the Taipei midnight cutoff independently converted to the expected UTC instant.
 - Daily record: memory/2026-11-09.md (memory_record, commit 3cbabc4b026e30dbf7d4ee35b7655565ee8dfa33).
+
+## CANDIDATE / UNREVIEWED: Do not use a partial clock as a cutoff
+
+- Root cause: optional clock parsing used a numeric prefix of the cutoff and silently discarded a following PM marker or malformed suffix. A Chinese evening twelve could also be treated as noon.
+- Fix: validate the complete clock in the cutoff clause, handle explicit AM/PM, and require review of ambiguous or malformed times.
+- Fix commit: 053d6989b98aa7a9eeda7f06be561e60bfb31788
+- Test evidence: the original code opened synthetic posts before PM or ambiguous cutoffs; the weekly regression verifies that neither is opened and that 23:30 appears in the correct report row. Full suite: 207 passed, 1 platform skip.
+- Daily record: memory/2026-11-10.md (memory_record, commit 053d6989b98aa7a9eeda7f06be561e60bfb31788).
+
+## CANDIDATE / UNREVIEWED: Check the comment icon before applying a feed date boundary
+
+- Root cause: inventory trusted date-shaped OCR lines as post footers before visual verification, so body dates could trigger the older-post stopping condition.
+- Fix: require the existing comment icon check before partitioning cards or counting older ones; if two known-author headers fall before one verified footer, refuse to treat the scan as complete.
+- Fix commit: 053d6989b98aa7a9eeda7f06be561e60bfb31788
+- Test evidence: synthetic body dates no longer hide the real in-range card, and a missing intermediate footer refuses the report. Native OCR replay of previously captured screenshots matched the original inventory totals.
+- Daily record: memory/2026-11-10.md (memory_record, commit 053d6989b98aa7a9eeda7f06be561e60bfb31788).
+
+## CANDIDATE / UNREVIEWED: Keep adjacent authors separated after a missed footer
+
+- Root cause: discarding an unverified footer could join its post to a later ordinary author's card. The known-author name check alone could not see that boundary.
+- Fix: if a date-shaped OCR row without a verified footer is followed by a possible new header at the observed layout positions, refuse the report before opening any comments. A footer verified in an overlapping frame is still usable.
+- Fix commit: 053d6989b98aa7a9eeda7f06be561e60bfb31788
+- Test evidence: reproduced before the fix for a synthetic ordinary author; the final regression covers ordinary and admin headers, overlapping verification, and preserved captured inventory counts. 207 product tests passed, 1 platform skip.
+- Daily record: memory/2026-11-10.md (memory_record, commit 053d6989b98aa7a9eeda7f06be561e60bfb31788).

@@ -10,8 +10,8 @@ from tempfile import TemporaryDirectory, mkdtemp
 from time import sleep
 
 from notesync.adapters.line_navigation import default_chat, notebook_action, open_notebook
-from notesync.adapters.note_auto import Footer, NotebookViewport, collect_comments, footer_candidates
-from notesync.adapters.note_ocr import CaptureCancelled, capture_frame, header_key, prompt, run_native
+from notesync.adapters.note_auto import Footer, NotebookViewport, collect_comments
+from notesync.adapters.note_ocr import TIMESTAMP, CaptureCancelled, capture_frame, header_key, prompt, run_native
 from notesync.domain.models import MAX_NOTE_COMMENTS, ContractError
 from notesync.exporters.note_xlsx import Worksheet, write_workbook
 from notesync.exporters.weekly_excel import weekly_import_sheets
@@ -77,6 +77,17 @@ def identify_post(lines: list[dict], *, width: float, first: bool) -> tuple[str,
     return "", False, lines
 
 
+def check_for_unverified_boundary(card: list[dict], *, width: float, scale: float, height: int) -> None:
+    """Refuse a possible split when a date without a verified icon precedes another header."""
+    header_positions = [row["world"] for row in card if 36 <= row["x"] * width <= 90]
+    for row in card:
+        if not (9 <= row["x"] * width <= 24 and TIMESTAMP.fullmatch(row["text"].strip())):
+            continue
+        date_bottom = row["world"] + row["h"] * height
+        if any(16 * scale <= position - date_bottom <= 105 * scale for position in header_positions):
+            raise ContractError("可能有未驗證的貼文頁尾，無法確認留言歸屬，未輸出週報")
+
+
 def scroll_feed(view: NotebookViewport, image: Path) -> tuple[int, dict, Path]:
     points = int(view.height * .40)
     view.scroll(-points)
@@ -125,18 +136,20 @@ def inventory(view: NotebookViewport, start: date, end: date, now: datetime) -> 
             elif item.get("confidence", 0) > lines[match].get("confidence", 0):
                 lines[match] = item
 
-        # Dates delimit the cards in the inventory. Before acting on any card,
-        # locate_post also verifies the bubble and matches the recorded image.
-        footers = footer_candidates(frame, width=view.width, height=view.height, top=view.top)
+        # Only a date anchored to a visible comment bubble may delimit a card.
+        footers = view.footers(frame, image)
         for entry in sorted(footers, key=lambda item: item.y):
             position = offset + entry.date_bottom * height
             if position <= boundary + 18:
                 continue
             card = sorted((row for row in lines if boundary + 14 < row["world"] < position - 30),
                           key=lambda row: (row["world"], row["x"]))
+            check_for_unverified_boundary(card, width=view.width, scale=frame["width"] / view.width, height=height)
             first = boundary < 0
             boundary = position
             lines = [row for row in lines if row["world"] > boundary + 14]
+            # Check for a missed card before using an older date to end the scan.
+            author, possible_mei, body = identify_post(card, width=view.width, first=first)
             published = publication_date(entry.timestamp, now=now)
             if published is None:
                 answer = prompt(f"發文日期無法確認（{entry.timestamp}，{image.name}），輸入 YYYY-MM-DD（:q 取消）：")
@@ -155,7 +168,6 @@ def inventory(view: NotebookViewport, start: date, end: date, now: datetime) -> 
                 return selected
             if not start <= published <= end:
                 continue
-            author, possible_mei, body = identify_post(card, width=view.width, first=first)
             if author and not possible_mei:
                 continue
             selected.append(Post(title_from_lines(body), author, possible_mei, published,
