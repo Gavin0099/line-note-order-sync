@@ -1,1 +1,1 @@
-"""Future deterministic order parsing, independent of source capture and storage."""
+"""Deterministic order parsing, independent of source capture and storage."""

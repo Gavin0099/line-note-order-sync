@@ -9,7 +9,7 @@
 - [x] Phase G0 : PR #1、#2 已依序修正、審查與合併；PR #2 final-head 兩平台 CI 通過。
 - [>] Phase M0 : S00 實作與驗證完成，PR #3 待 owner review／接受；未進入 S01。
 - [ ] Phase M1 : S01 Windows UIA 單篇擷取驗證。
-- [ ] Phase M2 : S02–S05 手動匯入 MVP。
+- [>] Phase M2 : 依 owner 新要求，先完成 S02–S05 的手動匯入功能 POC，供本機操作展示。
 - [ ] Phase M3 : S06 Windows 試用與交付。
 
 本檔是目前 phase、scope 與 anti-goals 的唯一狀態入口。
@@ -22,14 +22,20 @@
 - [x] PR #2 獨立 final-head 審查及 Windows／Linux CI；main 合併結果與已審 tree 一致。
 - [x] S00 PRD／資料契約、商品設定、合成正反案例、擷取模板與可安裝 CLI 骨架。
 - [x] S00 本機驗證與初始實作 head 的六項 CI 通過，已建立 PR #3；真實 TXT／實機仍未確認。
+- [x] 手動 POC 可操作 JSON／parser／SQLite／review／accept／CSV／HTML，六步驟合成 demo 跑通。
+- [x] 本機 100 個產品測試；補上回選舊版本的選用事件，v2 DB 不自動遷移 v1。
+- [x] wheel 乾淨環境 demo、瀏覽器報表核對及八項治理檢查通過；修正後證據另行更新。
+- [x] 已建立相依 PR #4；實作 head 8fb3b36 的六項 CI 成功；最終 companion 檢查看交付報告與 PR。
 
-本次 DONE 條件：兩個 PR 合併，完成 S00 的契約、驗收案例與可安裝骨架並另開 PR 交付。
-S00 沒有訂單 parser、SQLite schema 或擷取；不把 CLI smoke 當作後續 slice 的驗收。
-PR #3 保持 OPEN 供 owner review；canonical companion 推送後的最新 CI 由交付報告與 PR checks 查核。
+本次 DONE 條件：可執行合成 demo，完成 JSON 匯入、嚴格解析、SQLite 保存、人工審核、
+接受快照及 CSV／HTML 報表；展示重匯不加量、部分資料拒絕、新快照替換，並交付相依 PR。
+PR #3 保持 OPEN；POC 分支基於其已審 head，不自行合併。S01 改為獨立待實機驗證，
+本次不宣稱完整 MVP、LINE 擷取可行或正式營運通過。
 
 ## Backlog
 
-- P0: S00 交付後進入限時 S01，再完成 S02–S06；後者尚未實作。
+- P0: review PR #3／#4；後續完成 S01 實機實驗、S03 真實 TXT 格式與 S06 試用。
+  S02–S05 已有手動 JSON POC，不將此原型當作所有 slice 完整驗收。
 - P1: S07 改單／取消、S08 定期擷取、S09 Google Sheets，依能力條件另行驗收。
 - P2: Web 後台、付款與物流暫緩。
 
@@ -43,10 +49,12 @@ PR #3 保持 OPEN 供 owner review；canonical companion 推送後的最新 CI �
 - 2026-11-05：Owner 授權依序處理兩個 PR、條件式合併，再開始 S00；暫停新增治理範圍。
 - 2026-11-05：PR #1 merge=0a36de7；PR #2 merge=cb04aaf，已審 head=93c5ce3，CI run=42013777278 成功。
 - 2026-11-05：S01 首個候選為 line_openchat_note，實際來源由本人於實測時確認；TXT 樣本尚缺。
+- 2026-11-05：Owner 要求先有功能 POC 可看；先做 S02–S05 的手動 JSON 流程與本機報表，
+  不等待 LINE UIA；JSON 商品設定沿用 YAML 範例欄位，POC 暫不解析 YAML 或未確認的 TXT。
 
 ## Known Risks
 
-- 僅有 S00 CLI 骨架與其 smoke 測試；尚無訂單 parser、SQLite schema 或訂單行為測試。
+- 已有手動 JSON POC 與產品測試；真實來源、TXT／YAML、LINE 及完整 MVP 尚未驗收。
 - Windows LINE 的 UIA 擷取、穩定留言 ID 與每批完整性均為 NOT_EVALUATED。
 - repo 為公開；實際留言、買家資料、登入資訊與本機傾印不得提交。
 - 缺少來源身分時不得推定改單或取消；部分／未知快照不得成為正式叫貨報表依據。
@@ -55,6 +63,6 @@ PR #3 保持 OPEN 供 owner review；canonical companion 推送後的最新 CI �
 
 ## Anti-Goals
 
-- 本次僅實作 S00，不操作 LINE、不匯入真實買家資料，不開始 S01–S09。
+- 本次只交付合成資料的手動功能 POC，不操作 LINE、不匯入真實買家資料，不實作 S01／S06–S09。
 - 不修改 framework submodule 內容，不調降驗證、證據或 fail-closed 標準。
-- 不變更 repo 可見性或 branch protection，不發布軟體版本或部署；S00 另開 PR 交付。
+- 不變更 repo 可見性或 branch protection，不發布、部署或合併 PR；POC 另開相依 PR 交付。
