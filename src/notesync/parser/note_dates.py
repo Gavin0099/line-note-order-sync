@@ -18,8 +18,16 @@ DATE = (
     r"|(?:20[0-9]{2})?(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))"
 )
 CLOCK = r"(?:上午|下午|早上|中午|晚上|凌晨)?\s*[0-9]{1,2}(?:[:：][0-9]{2}|點(?:[0-9]{1,2}分?|半)?)"
-AFTER_DATE = re.compile(rf"(?<![0-9])(?P<day>{DATE})(?![0-9])\s*(?P<clock>{CLOCK})?\s*{CLOSE}")
-BEFORE_DATE = re.compile(rf"{CLOSE}(?:日期|時間|日)?\s*(?:到|至|於|為|:|：)?\s*(?P<day>{DATE})(?![0-9])\s*(?P<clock>{CLOCK})?")
+SPACE = r"[^\S\r\n]*"
+CLOCK_CLAUSE = r"[^\r\n#＃,，;；。!?！？]"
+AFTER_DATE = re.compile(rf"(?<![0-9./:-])(?P<day>{DATE})(?![0-9./:-])(?P<clock>{CLOCK_CLAUSE}*?){CLOSE}")
+BEFORE_DATE = re.compile(rf"{CLOSE}(?:日期|時間|日)?{SPACE}(?:到|至|於|為|:|：)?{SPACE}"
+                         rf"(?P<day>{DATE})(?![0-9./:-])(?P<clock>{CLOCK_CLAUSE}*)")
+CUTOFF_CLOCK = re.compile(
+    rf"(?:(?P<period>上午|下午|早上|中午|晚上|凌晨){SPACE})?"
+    rf"(?P<hour>[0-9]{{1,2}})(?::(?P<minute>[0-9]{{2}})|點(?:(?P<point_minute>[0-9]{{1,2}})分?|(?P<half>半))?)"
+    rf"(?:{SPACE}(?P<meridiem>[AP]\.?M\.?))?"
+)
 
 
 def report_dates(start: str | None, end: str | None, *, today: date) -> tuple[date, date]:
@@ -71,6 +79,30 @@ def cutoff(day: date, clock: time | None = None) -> datetime:
     return datetime.combine(day, clock, TAIPEI)
 
 
+def cutoff_clock(value: str) -> time:
+    match = CUTOFF_CLOCK.fullmatch(value)
+    if not match or (match["period"] and match["meridiem"]):
+        raise ValueError("unrecognized cutoff clock")
+    hour = int(match["hour"])
+    minute = 30 if match["half"] else int(match["minute"] or match["point_minute"] or 0)
+    period, meridiem = match["period"], match["meridiem"]
+    if period or meridiem:
+        if not 1 <= hour <= 12 or (period == "晚上" and hour == 12):
+            raise ValueError("ambiguous cutoff hour")
+        if meridiem:
+            hour = hour % 12 + (12 if meridiem.replace(".", "") == "PM" else 0)
+        elif period == "中午":
+            if hour not in (11, 12, 1):
+                raise ValueError("ambiguous midday cutoff")
+            if hour == 1:
+                hour = 13
+        elif period in ("下午", "晚上"):
+            hour = hour % 12 + 12
+        else:
+            hour %= 12
+    return time(hour, minute)
+
+
 def deadline_from_text(text: str, *, published: date) -> datetime | None:
     text = normalized(text)
     if re.search(r"(?:改期|延後|延期|延長|提前)", text):
@@ -93,18 +125,8 @@ def deadline_from_text(text: str, *, published: date) -> datetime | None:
             if day < published:
                 return None
             times = dates.setdefault(day, set())
-            if match["clock"]:
-                clock = "".join(match["clock"].split())
-                chunks = re.findall(r"[0-9]+", clock)
-                hour = int(chunks[0])
-                minute = 30 if "半" in clock else int(chunks[1]) if len(chunks) == 2 else 0
-                if clock.startswith("晚上") and hour == 12:
-                    return None
-                if clock.startswith(("下午", "中午", "晚上")) and hour < 12:
-                    hour += 12
-                elif clock.startswith(("上午", "早上", "凌晨")) and hour == 12:
-                    hour = 0
-                times.add(time(hour, minute))
+            if clock := match["clock"].strip():
+                times.add(cutoff_clock(clock))
         except ValueError:
             return None
     if len(dates) != 1:
