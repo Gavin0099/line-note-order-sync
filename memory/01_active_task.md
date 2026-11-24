@@ -8,4 +8,4 @@
 
 - Update this file when task state changes.
 
-- Integrated cutoff and footer guard repairs on main after a concurrent weekly PR merge. Full suite covers the existing website import sheets; follow-up branch ready for review. <!-- memory_record_projection:active-task-summary:5c85751274d2c3aea61f315866c8670581c9cb4e0dd30683f4d47338ddff5c38 -->
+- Saved the Mei three-sheet shipping format as a repo skill with a validated synthetic Excel example. Existing export commands are unchanged. <!-- memory_record_projection:active-task-summary:51db36f5a998e5464f0d185c08a5e274883a9e198a58bc0081fffc176ba5cb0c -->

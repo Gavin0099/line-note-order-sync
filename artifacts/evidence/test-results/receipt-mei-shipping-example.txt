@@ -1,0 +1,1 @@
+Synthetic package passed: sheet names/order, native filters, formulas, cached totals, blank phones, no external links or macros.

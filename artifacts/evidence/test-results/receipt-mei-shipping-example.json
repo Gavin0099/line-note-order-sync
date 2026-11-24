@@ -1,0 +1,17 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "python3 -c \"\nfrom pathlib import Path\nfrom zipfile import ZipFile\nimport re\nimport xml.etree.ElementTree as ET\nskill = Path(\\\".agents/skills/mei-shipping-excel\\\")\nassert \\\"name: mei-shipping-excel\\n\\\" in (skill / \\\"SKILL.md\\\").read_text(encoding=\\\"utf-8\\\")\nns = {\\\"m\\\": \\\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\\\"}\nwith ZipFile(skill / \\\"assets/mei-shipping-example.xlsx\\\") as archive:\n    def read(name):\n        return ET.fromstring(archive.read(name))\n    book = read(\\\"xl/workbook.xml\\\")\n    assert [sheet.attrib[\\\"name\\\"] for sheet in book.findall(\\\"m:sheets/m:sheet\\\", ns)] == [\\\"\u51fa\u8ca8\u7e3d\u8868\\\", \\\"\u5305\u66f8\u660e\u7d30\\\", \\\"\u8cb7\u5bb6\u5206\u55ae\\\"]\n    for i, expected in enumerate((\\\"A4:K7\\\", \\\"A4:I10\\\"), 1):\n        sheet = read(f\\\"xl/worksheets/sheet{i}.xml\\\")\n        assert sheet.find(\\\"m:autoFilter\\\", ns).attrib[\\\"ref\\\"] == expected\n    summary = read(\\\"xl/worksheets/sheet1.xml\\\")\n    detail = read(\\\"xl/worksheets/sheet2.xml\\\")\n    split = read(\\\"xl/worksheets/sheet3.xml\\\")\n    assert summary.find(\\\".//m:c[@r=\\\\\\\"D8\\\\\\\"]/m:v\\\", ns).text == \\\"990\\\"\n    assert detail.find(\\\".//m:c[@r=\\\\\\\"H5\\\\\\\"]/m:f\\\", ns).text == \\\"F5*G5\\\"\n    assert split.find(\\\".//m:c[@r=\\\\\\\"F8\\\\\\\"]/m:v\\\", ns).text == \\\"480\\\"\n    for r in range(5, 8):\n        assert summary.find(f\\\".//m:c[@r=\\\\\\\"I{r}\\\\\\\"]/m:v\\\", ns) is None\n    xml = b\\\"\\n\\\".join(archive.read(name) for name in archive.namelist() if name.endswith(\\\".xml\\\"))\n    assert not re.search(rb\\\"(?<![0-9])09[0-9]{8}(?![0-9])|/Users/|https://lin\\.ee/\\\", xml)\n    assert not any(\\\"externallink\\\" in name.lower() or \\\"vbaproject\\\" in name.lower() for name in archive.namelist())\nprint(\\\"Synthetic package passed: sheet names/order, native filters, formulas, cached totals, blank phones, no external links or macros.\\\")\n\"",
+  "exit_code": 0,
+  "started_at": "2026-11-24T15:17:10Z",
+  "finished_at": "2026-11-24T15:17:10Z",
+  "runner": "governance_tools.test_evidence_receipt_writer",
+  "linked_commit": "3e3bb47fbc68031a50960efe6e12143d254e9e03",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/receipt-mei-shipping-example.txt"
+  ],
+  "cannot_claim": [
+    "semantic correctness of the tested behavior",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}
