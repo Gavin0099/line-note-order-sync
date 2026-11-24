@@ -39,6 +39,8 @@ detects changes, and exports auditable order reports.
 `.venv/bin/python -m notesync capture-week`。也可用 `--from` 和 `--to` 指定發文日期。
 Excel 在同一主題內依暱稱加總明確的獨立喊單；待判讀的改單、取消及不明商品編號保留空白。
 要交接到團購網站，請參照 [Mei 後台記事本匯入](docs/MEI_NOTEBOOK_IMPORT.md)。
+要製作 Mei 的三分頁出貨 Excel，可在這個專案使用 `$mei-shipping-excel`。
+欄位、公式和合成範例見 [Mei 出貨整理 Skill](.agents/skills/mei-shipping-excel/SKILL.md)。
 
 技術基線為 Python 3.12、SQLite、pytest。Mac 視窗擷取使用 Swift 與 macOS 輔助使用介面。
 本機指令可為既有 Mei 後台匯入預覽產生檔案；上傳 Google Sheets 與保存網站草稿仍由操作者執行。
